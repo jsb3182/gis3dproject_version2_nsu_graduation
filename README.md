@@ -5,9 +5,11 @@
 팀장:정성범
 팀원 : 봉승아, 최민수, 김유민 
 
+무단으로 사용을 금지합니다
 
 
-Vue 3 + Vite 기반 WebGIS 프론트엔드입니다.
+
+Vue 3 + Vite 기반 WebGIS 프론트엔드입니다+ backend full stack.
 
 ## Tech Stack
 - Vue 3 (Composition API)
@@ -15,13 +17,14 @@ Vue 3 + Vite 기반 WebGIS 프론트엔드입니다.
 - CesiumJS
 - Bootstrap 5
 - Axios
-- qgis 
+- qgis
+- postgresql
 
 ## Features
 - 3D WebGIS 기반 대피소 시각화
 - 위치 기반 대피소 검색
 - GeoServer WFS 연동
-- firebase 사용
+- firebase 사용 을 인한베포
 
 ## Development
 npm install
