@@ -1,0 +1,28 @@
+# 천안시 민방위 대피소 안내 시스템 (Frontend+backend + backend)
+지도교수 : 남서울대학교 두론공간정보 공학과 유수홍 교수님 
+
+만든사람 남서울대학교 캡스톤 디자인 2025년 6조 
+팀장:정성범
+팀원 : 봉승아, 최민수, 김유민 
+
+
+
+Vue 3 + Vite 기반 WebGIS 프론트엔드입니다.
+
+## Tech Stack
+- Vue 3 (Composition API)
+- Vite
+- CesiumJS
+- Bootstrap 5
+- Axios
+- qgis 
+
+## Features
+- 3D WebGIS 기반 대피소 시각화
+- 위치 기반 대피소 검색
+- GeoServer WFS 연동
+- firebase 사용
+
+## Development
+npm install
+npm run dev
