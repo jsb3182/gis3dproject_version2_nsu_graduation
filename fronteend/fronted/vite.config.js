@@ -21,11 +21,11 @@ export default defineConfig({
     host: '0.0.0.0', // ✅ 외부에서도 접속 가능하게
     port: 5173,
     proxy: {
-      '/geoserver': {
-        target: 'https://api.child119.com',
+      '/api-geoserver': {
+        target: 'http://localhost:8080',
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path
+        rewrite: (path) => path.replace(/^\/api-geoserver/, '/geoserver')
       }
     }
   }

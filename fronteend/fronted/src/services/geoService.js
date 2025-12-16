@@ -18,7 +18,7 @@ import { convertEPSG5174ToWGS84 } from '@/utils/coordinateConverter'
  * ====================================
  */
 const GEOSERVER_CONFIG = {
-  baseURL: 'http://localhost:8080/geoserver',  // 로컬 GeoServer
+  baseURL: '/api-geoserver',  // 로컬 GeoServer 프록시 사용
   workspace: 'gis3d',
 
   // GeoServer 레이어 이름

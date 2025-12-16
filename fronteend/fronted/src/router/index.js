@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 //import HomeView from '../views/HomeView.vue'
-import { auth,db } from "../firebase/index";
-import { doc, getDoc } from "firebase/firestore";  // ✅ Firestore에서 유저정보 읽기
+import { isAuthenticated, isAdmin } from "@/api/auth";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -222,51 +221,25 @@ const router = createRouter({
   ],
 });
 
-// ✅ 관리자 여부 확인 함수 (username에 'admin' 포함인지 확인)
-async function isAdminUser(firebaseUser) {
-  if (!firebaseUser) return false;
-
-  try {
-    const userDocRef = doc(db, "users", firebaseUser.uid);
-    const userDoc = await getDoc(userDocRef);
-
-    if (!userDoc.exists()) return false;
-
-    const data = userDoc.data();
-    const username = data.username || "";
-
-    // Firestore rules에서처럼 username에 'admin' 포함 여부로 판단
-    return username.includes("admin");
-  } catch (e) {
-    console.error("관리자 권한 확인 중 오류:", e);
-    return false;
-  }
-}
-
-// 🔐 전역 라우터 가드
+// 🔐 전역 라우터 가드 (백엔드 API 방식)
 router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
   const requiresAdmin = to.matched.some((record) => record.meta.requiresAdmin);
 
-  const currentUser = auth.currentUser;
-
   // 1) 로그인 필수인데 로그인 안 되어 있을 때
-  if (requiresAuth && !currentUser) {
+  if (requiresAuth && !isAuthenticated()) {
     alert("로그인이 필요합니다.");
     return next("/login");
   }
 
   // 2) 관리자 전용 페이지 접근 시
   if (requiresAdmin) {
-    // 로그인은 되어 있겠지만 혹시 모르니 한 번 더
-    if (!currentUser) {
+    if (!isAuthenticated()) {
       alert("관리자 페이지입니다. 로그인 후 이용해주세요.");
       return next("/login");
     }
 
-    const admin = await isAdminUser(currentUser);
-
-    if (!admin) {
+    if (!isAdmin()) {
       alert("관리자만 접근할 수 있는 페이지입니다.");
       return next("/"); // 일반 홈으로 돌려보내기
     }

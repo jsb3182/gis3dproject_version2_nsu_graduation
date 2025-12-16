@@ -16,7 +16,6 @@
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
     "cesium": "^1.136.0",
-    "firebase": "^12.4.0",
     "install": "^0.13.0",
     "pinia": "^3.0.3",
     "proj4": "^2.20.0",
