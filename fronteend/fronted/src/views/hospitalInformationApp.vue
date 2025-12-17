@@ -41,6 +41,16 @@
     </div>
     <!-- 내 위치 새로고침 버튼 :: end -->
 
+    <!-- 건물 정보 패널 :: start -->
+    <div v-if="selectedBuildingInfo" class="position-fixed bg-white shadow-sm rounded p-3" style="top: 150px; left: 10px; z-index: 2; max-width: 300px;">
+      <h6 class="fw-bold border-bottom pb-2 mb-2">선택된 건물 정보</h6>
+      <div v-for="(value, key) in selectedBuildingInfo" :key="key" class="small">
+        <strong>{{ key }}:</strong> {{ value }}
+      </div>
+      <button class="btn btn-sm btn-outline-danger mt-2" @click="selectedBuildingInfo = null">닫기</button>
+    </div>
+    <!-- 건물 정보 패널 :: end -->
+
   </div>
   <!-- 바텀시트 -->
   <div class="position-fixed start-0 end-0 bg-white  rounded-top-4 shadow-lg " :style="sheetStyle" ref="bottomSheet"
@@ -344,11 +354,11 @@ const initCesium = async () => {
       })
     });
 
-    // VWorld 위성지도 (WMS)
+    // VWorld 기본지도 (WMS)
     viewer.value.imageryLayers.addImageryProvider(
       new Cesium.WebMapServiceImageryProvider({
         url: 'http://api.vworld.kr/req/wms',
-        layers: 'Satellite',
+        layers: 'Base',
         parameters: {
           service: 'WMS', version: '1.3.0', request: 'GetMap',
           transparent: 'false', format: 'image/jpeg', key: VWORLD_API_KEY
@@ -367,6 +377,16 @@ const initCesium = async () => {
         }
       })
     );
+
+    // V-World 3D 건물 데이터 추가
+    try {
+      const vworld3DTileset = await Cesium.Cesium3DTileset.fromUrl(
+        `https://api.vworld.kr/req/3dtiles/2.0?key=${VWORLD_API_KEY}&domain=http://localhost&layer=facility_build&crs=EPSG:4326`
+      );
+      viewer.value.scene.primitives.add(vworld3DTileset);
+    } catch (error) {
+        console.error("V-World 3D 타일셋 로딩에 실패했습니다. API 키의 도메인 설정을 확인하세요.", error);
+    }
 
     goToCheonan();
     await loadAllLayers();
