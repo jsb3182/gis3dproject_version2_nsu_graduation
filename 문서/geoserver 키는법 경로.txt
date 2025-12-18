@@ -1,0 +1,1 @@
+C:\Program Files\GeoServer\bin 여기에 startup 누르기 
