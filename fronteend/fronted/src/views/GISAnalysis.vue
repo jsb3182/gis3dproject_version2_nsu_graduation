@@ -373,12 +373,12 @@ const showShelters = async () => {
 
           // 3D 원기둥 엔티티 추가
           const entity = viewer.entities.add({
-            position: Cesium.Cartesian3.fromDegrees(lon, lat, 0),
+            position: Cesium.Cartesian3.fromDegrees(lon, lat, 25),  // 지면에서 약간 떠있게
             cylinder: {
-              length: 30,
-              topRadius: 5,
-              bottomRadius: 5,
-              material: Cesium.Color.RED.withAlpha(0.7),
+              length: 50,  // 원기둥 높이를 더 높게
+              topRadius: 8,
+              bottomRadius: 8,
+              material: Cesium.Color.RED.withAlpha(0.8),
               outline: true,
               outlineColor: Cesium.Color.WHITE,
               outlineWidth: 2
@@ -594,12 +594,12 @@ const showAll = async () => {
           const [lon, lat] = feature.geometry.coordinates
 
           const entity = viewer.entities.add({
-            position: Cesium.Cartesian3.fromDegrees(lon, lat, 0),
+            position: Cesium.Cartesian3.fromDegrees(lon, lat, 25),  // 지면에서 약간 떠있게
             cylinder: {
-              length: 30,
-              topRadius: 5,
-              bottomRadius: 5,
-              material: Cesium.Color.RED.withAlpha(0.7),
+              length: 50,  // 원기둥 높이를 더 높게
+              topRadius: 8,
+              bottomRadius: 8,
+              material: Cesium.Color.RED.withAlpha(0.8),
               outline: true,
               outlineColor: Cesium.Color.WHITE,
               outlineWidth: 2
@@ -642,12 +642,12 @@ const showAll = async () => {
               hierarchy: Cesium.Cartesian3.fromDegreesArray(
                 feature.geometry.coordinates[0].flatMap(coord => coord)
               ),
-              material: Cesium.Color.WHITESMOKE.withAlpha(0.6),
+              material: Cesium.Color.WHITESMOKE.withAlpha(0.7),
               outline: true,
               outlineColor: Cesium.Color.GRAY,
               outlineWidth: 1,
               height: 0,
-              extrudedHeight: 12
+              extrudedHeight: 25  // 높이를 더 높게
             },
             properties: {
               featureData: feature,
@@ -662,12 +662,12 @@ const showAll = async () => {
                 hierarchy: Cesium.Cartesian3.fromDegreesArray(
                   polygonCoords[0].flatMap(coord => coord)
                 ),
-                material: Cesium.Color.WHITESMOKE.withAlpha(0.6),
+                material: Cesium.Color.WHITESMOKE.withAlpha(0.7),
                 outline: true,
                 outlineColor: Cesium.Color.GRAY,
                 outlineWidth: 1,
                 height: 0,
-                extrudedHeight: 12
+                extrudedHeight: 25  // 높이를 더 높게
               },
               properties: {
                 featureData: feature,
@@ -744,7 +744,7 @@ const showAll = async () => {
       })
     }
 
-    // chmergr (지적도 병합) - 보라색 폴리곤
+    // chmergr (지적도 병합) - 보라색 3D 폴리곤 (토지 구획 표현)
     if (layers.chmergr && layers.chmergr.features) {
       layers.chmergr.features.forEach(feature => {
         if (feature.geometry.type === 'Polygon') {
@@ -753,11 +753,12 @@ const showAll = async () => {
               hierarchy: Cesium.Cartesian3.fromDegreesArray(
                 feature.geometry.coordinates[0].flatMap(coord => coord)
               ),
-              material: Cesium.Color.PURPLE.withAlpha(0.3),
+              material: Cesium.Color.PURPLE.withAlpha(0.5),
               outline: true,
               outlineColor: Cesium.Color.PURPLE,
-              outlineWidth: 1,
-              height: 0
+              outlineWidth: 2,
+              height: 0,
+              extrudedHeight: 5  // 낮은 높이로 토지 구획 표현
             },
             properties: {
               featureData: feature,
@@ -772,11 +773,12 @@ const showAll = async () => {
                 hierarchy: Cesium.Cartesian3.fromDegreesArray(
                   polygonCoords[0].flatMap(coord => coord)
                 ),
-                material: Cesium.Color.PURPLE.withAlpha(0.3),
+                material: Cesium.Color.PURPLE.withAlpha(0.5),
                 outline: true,
                 outlineColor: Cesium.Color.PURPLE,
-                outlineWidth: 1,
-                height: 0
+                outlineWidth: 2,
+                height: 0,
+                extrudedHeight: 5  // 낮은 높이로 토지 구획 표현
               },
               properties: {
                 featureData: feature,
@@ -798,12 +800,12 @@ const showAll = async () => {
               hierarchy: Cesium.Cartesian3.fromDegreesArray(
                 feature.geometry.coordinates[0].flatMap(coord => coord)
               ),
-              material: Cesium.Color.ORANGE.withAlpha(0.5),
+              material: Cesium.Color.ORANGE.withAlpha(0.7),
               outline: true,
               outlineColor: Cesium.Color.DARKORANGE,
               outlineWidth: 2,
               height: 0,
-              extrudedHeight: 20
+              extrudedHeight: 35  // 대피소는 더 높게
             },
             properties: {
               featureData: feature,
@@ -818,12 +820,12 @@ const showAll = async () => {
                 hierarchy: Cesium.Cartesian3.fromDegreesArray(
                   polygonCoords[0].flatMap(coord => coord)
                 ),
-                material: Cesium.Color.ORANGE.withAlpha(0.5),
+                material: Cesium.Color.ORANGE.withAlpha(0.7),
                 outline: true,
                 outlineColor: Cesium.Color.DARKORANGE,
                 outlineWidth: 2,
                 height: 0,
-                extrudedHeight: 20
+                extrudedHeight: 35  // 대피소는 더 높게
               },
               properties: {
                 featureData: feature,
@@ -845,12 +847,12 @@ const showAll = async () => {
               hierarchy: Cesium.Cartesian3.fromDegreesArray(
                 feature.geometry.coordinates[0].flatMap(coord => coord)
               ),
-              material: Cesium.Color.LIGHTGRAY.withAlpha(0.7),
+              material: Cesium.Color.LIGHTGRAY.withAlpha(0.8),
               outline: true,
               outlineColor: Cesium.Color.DARKGRAY,
               outlineWidth: 1,
               height: 0,
-              extrudedHeight: 15
+              extrudedHeight: 30  // 높이를 더 높게
             },
             properties: {
               featureData: feature,
@@ -865,12 +867,12 @@ const showAll = async () => {
                 hierarchy: Cesium.Cartesian3.fromDegreesArray(
                   polygonCoords[0].flatMap(coord => coord)
                 ),
-                material: Cesium.Color.LIGHTGRAY.withAlpha(0.7),
+                material: Cesium.Color.LIGHTGRAY.withAlpha(0.8),
                 outline: true,
                 outlineColor: Cesium.Color.DARKGRAY,
                 outlineWidth: 1,
                 height: 0,
-                extrudedHeight: 15
+                extrudedHeight: 30  // 높이를 더 높게
               },
               properties: {
                 featureData: feature,
@@ -883,7 +885,7 @@ const showAll = async () => {
       })
     }
 
-    // thematicmerge - 연청색 폴리곤
+    // thematicmerge (주제도) - 청록색 3D 폴리곤 (정교한 입체감)
     if (layers.thematicmerge && layers.thematicmerge.features) {
       layers.thematicmerge.features.forEach(feature => {
         if (feature.geometry.type === 'Polygon') {
@@ -892,11 +894,12 @@ const showAll = async () => {
               hierarchy: Cesium.Cartesian3.fromDegreesArray(
                 feature.geometry.coordinates[0].flatMap(coord => coord)
               ),
-              material: Cesium.Color.CYAN.withAlpha(0.3),
+              material: Cesium.Color.CYAN.withAlpha(0.6),
               outline: true,
               outlineColor: Cesium.Color.DARKCYAN,
-              outlineWidth: 1,
-              height: 0
+              outlineWidth: 2,
+              height: 0,
+              extrudedHeight: 8  // 낮은 높이로 정교한 레이어 표현
             },
             properties: {
               featureData: feature,
@@ -911,11 +914,12 @@ const showAll = async () => {
                 hierarchy: Cesium.Cartesian3.fromDegreesArray(
                   polygonCoords[0].flatMap(coord => coord)
                 ),
-                material: Cesium.Color.CYAN.withAlpha(0.3),
+                material: Cesium.Color.CYAN.withAlpha(0.6),
                 outline: true,
                 outlineColor: Cesium.Color.DARKCYAN,
-                outlineWidth: 1,
-                height: 0
+                outlineWidth: 2,
+                height: 0,
+                extrudedHeight: 8  // 낮은 높이로 정교한 레이어 표현
               },
               properties: {
                 featureData: feature,
@@ -975,7 +979,7 @@ const registerClickHandler = () => {
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
 }
 
-// 천안시로 이동
+// 천안시로 이동 (3D 뷰)
 const goToCheonan = () => {
   if (!viewer) return
 
@@ -985,11 +989,16 @@ const goToCheonan = () => {
       CHEONAN_CENTER.lat,
       CHEONAN_CENTER.height
     ),
+    orientation: {
+      heading: Cesium.Math.toRadians(0),    // 북쪽 방향
+      pitch: Cesium.Math.toRadians(-45),    // 45도 아래로 기울임 (3D 뷰)
+      roll: 0
+    },
     duration: 2
   })
 }
 
-// 내 위치로 이동
+// 내 위치로 이동 (3D 뷰)
 const goToMyLocation = () => {
   if (userLocation.value && viewer) {
     viewer.camera.flyTo({
@@ -998,6 +1007,11 @@ const goToMyLocation = () => {
         userLocation.value.lat,
         5000
       ),
+      orientation: {
+        heading: Cesium.Math.toRadians(0),
+        pitch: Cesium.Math.toRadians(-45),  // 3D 뷰
+        roll: 0
+      },
       duration: 2
     })
   } else {
@@ -1005,11 +1019,16 @@ const goToMyLocation = () => {
   }
 }
 
-// 아이템으로 이동
+// 아이템으로 이동 (3D 뷰)
 const flyToItem = (item) => {
   if (item.lat && item.lon && viewer) {
     viewer.camera.flyTo({
-      destination: Cesium.Cartesian3.fromDegrees(item.lon, item.lat, 3000),
+      destination: Cesium.Cartesian3.fromDegrees(item.lon, item.lat, 1500),
+      orientation: {
+        heading: Cesium.Math.toRadians(0),
+        pitch: Cesium.Math.toRadians(-45),  // 3D 뷰
+        roll: 0
+      },
       duration: 2
     })
   }
