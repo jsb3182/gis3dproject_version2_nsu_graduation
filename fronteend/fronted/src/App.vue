@@ -149,7 +149,10 @@
           <button @click="goToHome"
             class="nav-link d-flex flex-column align-items-center justify-content-center py-2 text-gray"
             :class="{ 'bg-light': $route.path === '/' }">
-          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3L4 9v12h16V9zm-2 7h4v9h-4zm6 0h2v3h-2zm-.67-2H8.67L12 5.5zM8 10v3H6v-3zm-2 5h2v4H6zm10 4v-4h2v4z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24">
+              <path fill="currentColor"
+                d="M12 3L4 9v12h16V9zm-2 7h4v9h-4zm6 0h2v3h-2zm-.67-2H8.67L12 5.5zM8 10v3H6v-3zm-2 5h2v4H6zm10 4v-4h2v4z" />
+            </svg>
             <small class="mt-1 text-nowrap text-medium">주변 대피소</small>
           </button>
         </li>
@@ -159,22 +162,19 @@
             class="nav-link d-flex flex-column align-items-center justify-content-center py-2 text-gray"
             :class="{ 'bg-light': $route.path === '/hospitalInformationApp' }">
             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" aria-label="공간분석">
-  <!-- Grid -->
-  <path fill="currentColor" d="M4 4h16v16H4z" opacity=".15"/>
-  <path fill="currentColor" d="M4 4h16v2H4zm0 5h16v2H4zm0 5h16v2H4zm0 5h16v2H4z" opacity=".35"/>
-  <path fill="currentColor" d="M4 4h2v16H4zm5 0h2v16H9zm5 0h2v16h-2zm5 0h2v16h-2z" opacity=".25"/>
+              <!-- Grid -->
+              <path fill="currentColor" d="M4 4h16v16H4z" opacity=".15" />
+              <path fill="currentColor" d="M4 4h16v2H4zm0 5h16v2H4zm0 5h16v2H4zm0 5h16v2H4z" opacity=".35" />
+              <path fill="currentColor" d="M4 4h2v16H4zm5 0h2v16H9zm5 0h2v16h-2zm5 0h2v16h-2z" opacity=".25" />
 
-  <!-- Buffer circle (더 뒤로 보이게) -->
-  <path fill="currentColor" d="M16 14a4.5 4.5 0 1 0 0 9a4.5 4.5 0 0 0 0-9" opacity=".08"/>
+              <!-- Buffer circle (더 뒤로 보이게) -->
+              <path fill="currentColor" d="M16 14a4.5 4.5 0 1 0 0 9a4.5 4.5 0 0 0 0-9" opacity=".08" />
 
-  <!-- Pin (앞으로 강조) -->
-  <path
-    d="M16 13.8c-1.8 0-3.2 1.46-3.2 3.25c0 2.45 3.2 5.75 3.2 5.75s3.2-3.3 3.2-5.75c0-1.79-1.4-3.25-3.2-3.25m0 4.5a1.3 1.3 0 1 1 0-2.6a1.3 1.3 0 0 1 0 2.6z"
-    fill="currentColor"
-    stroke="#ffffff"
-    stroke-width="1.2"
-  />
-</svg>
+              <!-- Pin (앞으로 강조) -->
+              <path
+                d="M16 13.8c-1.8 0-3.2 1.46-3.2 3.25c0 2.45 3.2 5.75 3.2 5.75s3.2-3.3 3.2-5.75c0-1.79-1.4-3.25-3.2-3.25m0 4.5a1.3 1.3 0 1 1 0-2.6a1.3 1.3 0 0 1 0 2.6z"
+                fill="currentColor" stroke="#ffffff" stroke-width="1.2" />
+            </svg>
 
             <small class="mt-1 text-nowrap text-medium">공간분석</small>
           </button>
@@ -196,7 +196,10 @@
           <button @click="emergency"
             class="nav-link d-flex flex-column align-items-center justify-content-center py-2 text-gray"
             :class="{ 'bg-light': $route.path === '/emergency' }">
-           <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2.5L9.53 5h5zM4 7v13h16V7zm8-7l5 5h3a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h3zM7 18v-4h5v4zm7-1v-7h4v7zm-8-5V9h5v3z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24">
+              <path fill="currentColor"
+                d="M12.04 2.5L9.53 5h5zM4 7v13h16V7zm8-7l5 5h3a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h3zM7 18v-4h5v4zm7-1v-7h4v7zm-8-5V9h5v3z" />
+            </svg>
             <small class="mt-1 text-nowrap text-medium">사용자 게시판</small>
           </button>
         </li>
@@ -248,14 +251,11 @@ export default {
       return this.$route.path === path
     },
 
-    async logout() {
-      try {
-        await signOut(auth)
-        alert('로그아웃 되었습니다.')
-        this.$router.push('/login')
-      } catch (err) {
-        console.error('로그아웃 중 오류 발생:', err)
-      }
+    logout() {
+      // localStorage에서 사용자 정보 제거
+      localStorage.removeItem('user')
+      alert('로그아웃 되었습니다.')
+      this.$router.push('/login')
     },
 
     logAction() {
@@ -268,9 +268,9 @@ export default {
     const status = ref('로그인')
 
     onMounted(() => {
-      onAuthStateChanged(auth, (user) => {
-        status.value = user ? '로그아웃' : '로그인'
-      })
+      // localStorage에서 사용자 정보 확인
+      const user = localStorage.getItem('user')
+      status.value = user ? '로그아웃' : '로그인'
     })
 
     return { status }

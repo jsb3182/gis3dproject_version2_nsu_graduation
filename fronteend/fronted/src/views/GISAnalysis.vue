@@ -63,6 +63,58 @@
     </div>
     <!-- 내 위치 & 새로고침 버튼 :: end -->
 
+    <!-- 범례 (Legend) :: start -->
+    <div class="position-fixed start-0 p-3" style="bottom: 280px; z-index: 2;">
+      <div class="bg-white rounded-3 shadow-sm p-3" style="min-width: 200px;">
+        <h6 class="fw-bold mb-3" style="font-size: 14px;">🗺️ 범례</h6>
+
+        <div class="d-flex flex-column gap-2" style="font-size: 12px;">
+          <!-- 대피소 포인트 -->
+          <div class="d-flex align-items-center gap-2">
+            <div class="rounded-circle" style="width: 12px; height: 12px; background-color: red;"></div>
+            <span>민방위 대피소</span>
+          </div>
+
+          <!-- 대피소 폴리곤 -->
+          <div class="d-flex align-items-center gap-2">
+            <div class="rounded" style="width: 12px; height: 12px; background-color: orange;"></div>
+            <span>대피소 건물</span>
+          </div>
+
+          <!-- 천안시 건물 -->
+          <div class="d-flex align-items-center gap-2">
+            <div class="rounded" style="width: 12px; height: 12px; background-color: lightgray; border: 1px solid gray;"></div>
+            <span>천안시 건물</span>
+          </div>
+
+          <!-- 도로 -->
+          <div class="d-flex align-items-center gap-2">
+            <div style="width: 12px; height: 3px; background-color: yellow;"></div>
+            <span>도로 (링크)</span>
+          </div>
+
+          <!-- 노드 -->
+          <div class="d-flex align-items-center gap-2">
+            <div class="rounded-circle" style="width: 8px; height: 8px; background-color: blue;"></div>
+            <span>도로 노드</span>
+          </div>
+
+          <!-- 지적도 -->
+          <div class="d-flex align-items-center gap-2">
+            <div class="rounded" style="width: 12px; height: 12px; background-color: rgba(128, 0, 128, 0.3); border: 1px solid purple;"></div>
+            <span>지적도</span>
+          </div>
+
+          <!-- 주제도 -->
+          <div class="d-flex align-items-center gap-2">
+            <div class="rounded" style="width: 12px; height: 12px; background-color: rgba(0, 255, 255, 0.3); border: 1px solid darkcyan;"></div>
+            <span>주제도</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 범례 (Legend) :: end -->
+
   </div>
 
   <!-- 바텀시트 -->
@@ -207,7 +259,6 @@ const initCesium = async () => {
     loading.value = true
 
     viewer = new Cesium.Viewer(cesiumContainer.value, {
-      baseLayer: false,
       animation: false,
       timeline: false,
       fullscreenButton: true,
@@ -215,46 +266,28 @@ const initCesium = async () => {
       homeButton: true,
       sceneModePicker: true,
       navigationHelpButton: false,
-      terrainProvider: new Cesium.CesiumTerrainProvider({
-        url: Cesium.IonResource.fromAssetId(1)
-      })
+      terrainProvider: await Cesium.CesiumTerrainProvider.fromIonAssetId(1),
+      baseLayerPicker: false,
+      // Bing Maps Aerial with Labels (고해상도 위성 이미지)
+      imageryProvider: await Cesium.IonImageryProvider.fromAssetId(3)
     })
 
-    // VWorld 영상지도 추가
-    viewer.imageryLayers.addImageryProvider(
-      new Cesium.WebMapServiceImageryProvider({
-        url: 'http://api.vworld.kr/req/wms',
-        layers: 'Satellite',
-        parameters: {
-          service: 'WMS',
-          version: '1.3.0',
-          request: 'GetMap',
-          transparent: 'false',
-          format: 'image/jpeg',
-          key: '29A4D1FB-AD18-35A5-9E70-8676253EFB4C'
-        }
-      })
-    )
+    // 배경색 설정
+    viewer.scene.backgroundColor = Cesium.Color.TRANSPARENT
+    viewer.scene.globe.baseColor = Cesium.Color.WHITE
 
-    // VWorld 하이브리드 레이어 추가
-    viewer.imageryLayers.addImageryProvider(
-      new Cesium.WebMapServiceImageryProvider({
-        url: 'http://api.vworld.kr/req/wms',
-        layers: 'Hybrid',
-        parameters: {
-          service: 'WMS',
-          version: '1.3.0',
-          request: 'GetMap',
-          transparent: 'true',
-          format: 'image/png',
-          key: '29A4D1FB-AD18-35A5-9E70-8676253EFB4C'
-        }
-      })
-    )
+    // 고품질 렌더링 설정
+    viewer.scene.globe.enableLighting = false  // 조명 효과 끄기 (더 밝게)
+    viewer.scene.globe.depthTestAgainstTerrain = false  // 지형에 대한 깊이 테스트
+    viewer.scene.fog.enabled = false  // 안개 효과 끄기 (더 선명하게)
+    viewer.scene.skyAtmosphere.show = true  // 하늘 대기 표시
+
+    // 최대 해상도 설정
+    viewer.resolutionScale = 1.0  // 최대 해상도
 
     goToCheonan()
     await getUserLocation()
-    await showShelters()
+    await showAll()  // 모든 레이어를 처음부터 표시
     registerClickHandler()
 
   } catch (error) {
@@ -600,7 +633,7 @@ const showAll = async () => {
       })
     }
 
-    // 건물
+    // 건물 (일반 건물) - 밝은 회색 3D
     if (layers.build && layers.build.features) {
       layers.build.features.forEach(feature => {
         if (feature.geometry.type === 'Polygon') {
@@ -609,12 +642,12 @@ const showAll = async () => {
               hierarchy: Cesium.Cartesian3.fromDegreesArray(
                 feature.geometry.coordinates[0].flatMap(coord => coord)
               ),
-              material: Cesium.Color.BLUE.withAlpha(0.5),
+              material: Cesium.Color.WHITESMOKE.withAlpha(0.6),
               outline: true,
-              outlineColor: Cesium.Color.BLUE,
-              outlineWidth: 2,
+              outlineColor: Cesium.Color.GRAY,
+              outlineWidth: 1,
               height: 0,
-              extrudedHeight: 15
+              extrudedHeight: 12
             },
             properties: {
               featureData: feature,
@@ -629,12 +662,12 @@ const showAll = async () => {
                 hierarchy: Cesium.Cartesian3.fromDegreesArray(
                   polygonCoords[0].flatMap(coord => coord)
                 ),
-                material: Cesium.Color.BLUE.withAlpha(0.5),
+                material: Cesium.Color.WHITESMOKE.withAlpha(0.6),
                 outline: true,
-                outlineColor: Cesium.Color.BLUE,
-                outlineWidth: 2,
+                outlineColor: Cesium.Color.GRAY,
+                outlineWidth: 1,
                 height: 0,
-                extrudedHeight: 15
+                extrudedHeight: 12
               },
               properties: {
                 featureData: feature,
@@ -647,7 +680,7 @@ const showAll = async () => {
       })
     }
 
-    // 도로
+    // 도로 (링크) - 노란색 선
     if (layers.link && layers.link.features) {
       layers.link.features.forEach(feature => {
         if (feature.geometry.type === 'LineString') {
@@ -656,9 +689,9 @@ const showAll = async () => {
               positions: Cesium.Cartesian3.fromDegreesArray(
                 feature.geometry.coordinates.flatMap(coord => coord)
               ),
-              width: 5,
-              material: Cesium.Color.YELLOW.withAlpha(0.8),
-              clampToGround: false
+              width: 3,
+              material: Cesium.Color.YELLOW.withAlpha(0.9),
+              clampToGround: true
             },
             properties: {
               featureData: feature,
@@ -673,13 +706,220 @@ const showAll = async () => {
                 positions: Cesium.Cartesian3.fromDegreesArray(
                   lineCoords.flatMap(coord => coord)
                 ),
-                width: 5,
-                material: Cesium.Color.YELLOW.withAlpha(0.8),
-                clampToGround: false
+                width: 3,
+                material: Cesium.Color.YELLOW.withAlpha(0.9),
+                clampToGround: true
               },
               properties: {
                 featureData: feature,
                 layerType: 'link'
+              }
+            })
+            shelterEntities.push(entity)
+          })
+        }
+      })
+    }
+
+    // 노드 - 파란색 작은 원
+    if (layers.node && layers.node.features) {
+      layers.node.features.forEach(feature => {
+        if (feature.geometry.type === 'Point') {
+          const [lon, lat] = feature.geometry.coordinates
+          const entity = viewer.entities.add({
+            position: Cesium.Cartesian3.fromDegrees(lon, lat, 0),
+            point: {
+              pixelSize: 4,
+              color: Cesium.Color.BLUE.withAlpha(0.8),
+              outlineColor: Cesium.Color.WHITE,
+              outlineWidth: 1
+            },
+            properties: {
+              featureData: feature,
+              layerType: 'node'
+            }
+          })
+          shelterEntities.push(entity)
+        }
+      })
+    }
+
+    // chmergr (지적도 병합) - 보라색 폴리곤
+    if (layers.chmergr && layers.chmergr.features) {
+      layers.chmergr.features.forEach(feature => {
+        if (feature.geometry.type === 'Polygon') {
+          const entity = viewer.entities.add({
+            polygon: {
+              hierarchy: Cesium.Cartesian3.fromDegreesArray(
+                feature.geometry.coordinates[0].flatMap(coord => coord)
+              ),
+              material: Cesium.Color.PURPLE.withAlpha(0.3),
+              outline: true,
+              outlineColor: Cesium.Color.PURPLE,
+              outlineWidth: 1,
+              height: 0
+            },
+            properties: {
+              featureData: feature,
+              layerType: 'chmergr'
+            }
+          })
+          shelterEntities.push(entity)
+        } else if (feature.geometry.type === 'MultiPolygon') {
+          feature.geometry.coordinates.forEach(polygonCoords => {
+            const entity = viewer.entities.add({
+              polygon: {
+                hierarchy: Cesium.Cartesian3.fromDegreesArray(
+                  polygonCoords[0].flatMap(coord => coord)
+                ),
+                material: Cesium.Color.PURPLE.withAlpha(0.3),
+                outline: true,
+                outlineColor: Cesium.Color.PURPLE,
+                outlineWidth: 1,
+                height: 0
+              },
+              properties: {
+                featureData: feature,
+                layerType: 'chmergr'
+              }
+            })
+            shelterEntities.push(entity)
+          })
+        }
+      })
+    }
+
+    // shelter (대피소 폴리곤) - 주황색 폴리곤
+    if (layers.shelter && layers.shelter.features) {
+      layers.shelter.features.forEach(feature => {
+        if (feature.geometry.type === 'Polygon') {
+          const entity = viewer.entities.add({
+            polygon: {
+              hierarchy: Cesium.Cartesian3.fromDegreesArray(
+                feature.geometry.coordinates[0].flatMap(coord => coord)
+              ),
+              material: Cesium.Color.ORANGE.withAlpha(0.5),
+              outline: true,
+              outlineColor: Cesium.Color.DARKORANGE,
+              outlineWidth: 2,
+              height: 0,
+              extrudedHeight: 20
+            },
+            properties: {
+              featureData: feature,
+              layerType: 'shelter'
+            }
+          })
+          shelterEntities.push(entity)
+        } else if (feature.geometry.type === 'MultiPolygon') {
+          feature.geometry.coordinates.forEach(polygonCoords => {
+            const entity = viewer.entities.add({
+              polygon: {
+                hierarchy: Cesium.Cartesian3.fromDegreesArray(
+                  polygonCoords[0].flatMap(coord => coord)
+                ),
+                material: Cesium.Color.ORANGE.withAlpha(0.5),
+                outline: true,
+                outlineColor: Cesium.Color.DARKORANGE,
+                outlineWidth: 2,
+                height: 0,
+                extrudedHeight: 20
+              },
+              properties: {
+                featureData: feature,
+                layerType: 'shelter'
+              }
+            })
+            shelterEntities.push(entity)
+          })
+        }
+      })
+    }
+
+    // chbuildclip (천안시 건물) - 회색 3D 건물
+    if (layers.chbuildclip && layers.chbuildclip.features) {
+      layers.chbuildclip.features.forEach(feature => {
+        if (feature.geometry.type === 'Polygon') {
+          const entity = viewer.entities.add({
+            polygon: {
+              hierarchy: Cesium.Cartesian3.fromDegreesArray(
+                feature.geometry.coordinates[0].flatMap(coord => coord)
+              ),
+              material: Cesium.Color.LIGHTGRAY.withAlpha(0.7),
+              outline: true,
+              outlineColor: Cesium.Color.DARKGRAY,
+              outlineWidth: 1,
+              height: 0,
+              extrudedHeight: 15
+            },
+            properties: {
+              featureData: feature,
+              layerType: 'chbuildclip'
+            }
+          })
+          shelterEntities.push(entity)
+        } else if (feature.geometry.type === 'MultiPolygon') {
+          feature.geometry.coordinates.forEach(polygonCoords => {
+            const entity = viewer.entities.add({
+              polygon: {
+                hierarchy: Cesium.Cartesian3.fromDegreesArray(
+                  polygonCoords[0].flatMap(coord => coord)
+                ),
+                material: Cesium.Color.LIGHTGRAY.withAlpha(0.7),
+                outline: true,
+                outlineColor: Cesium.Color.DARKGRAY,
+                outlineWidth: 1,
+                height: 0,
+                extrudedHeight: 15
+              },
+              properties: {
+                featureData: feature,
+                layerType: 'chbuildclip'
+              }
+            })
+            shelterEntities.push(entity)
+          })
+        }
+      })
+    }
+
+    // thematicmerge - 연청색 폴리곤
+    if (layers.thematicmerge && layers.thematicmerge.features) {
+      layers.thematicmerge.features.forEach(feature => {
+        if (feature.geometry.type === 'Polygon') {
+          const entity = viewer.entities.add({
+            polygon: {
+              hierarchy: Cesium.Cartesian3.fromDegreesArray(
+                feature.geometry.coordinates[0].flatMap(coord => coord)
+              ),
+              material: Cesium.Color.CYAN.withAlpha(0.3),
+              outline: true,
+              outlineColor: Cesium.Color.DARKCYAN,
+              outlineWidth: 1,
+              height: 0
+            },
+            properties: {
+              featureData: feature,
+              layerType: 'thematicmerge'
+            }
+          })
+          shelterEntities.push(entity)
+        } else if (feature.geometry.type === 'MultiPolygon') {
+          feature.geometry.coordinates.forEach(polygonCoords => {
+            const entity = viewer.entities.add({
+              polygon: {
+                hierarchy: Cesium.Cartesian3.fromDegreesArray(
+                  polygonCoords[0].flatMap(coord => coord)
+                ),
+                material: Cesium.Color.CYAN.withAlpha(0.3),
+                outline: true,
+                outlineColor: Cesium.Color.DARKCYAN,
+                outlineWidth: 1,
+                height: 0
+              },
+              properties: {
+                featureData: feature,
+                layerType: 'thematicmerge'
               }
             })
             shelterEntities.push(entity)

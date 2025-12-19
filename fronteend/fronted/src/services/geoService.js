@@ -19,16 +19,18 @@ import { convertEPSG5174ToWGS84 } from '@/utils/coordinateConverter'
  */
 const GEOSERVER_CONFIG = {
   baseURL: '/api-geoserver',  // 로컬 GeoServer 프록시 사용
-  workspace: 'gis3d',
+  workspace: 'nsugis_version2',
 
   // GeoServer 레이어 이름
   layers: {
     build: 'build',
     chmergr: 'chmergr',
-    chspoint: 'chshpoint',      // 대피소 포인트
+    chspoint: 'chshpoint',      // 대피소 포인트 (GeoServer 이름: chshpoint)
     link: 'link',
     node: 'node',
-    thematicmerge: 'thematicmerge'
+    thematicmerge: 'thematicmerge',
+    chbuildclip: 'chbuildclip',
+    shelter: 'shelter'
   }
 }
 
@@ -84,16 +86,18 @@ const geoService = {
    */
   async getAllLayers() {
     try {
-      const [build, chmergr, chspoint, link, node, thematicmerge] = await Promise.all([
+      const [build, chmergr, chspoint, link, node, thematicmerge, chbuildclip, shelter] = await Promise.all([
         this.getFeatures(GEOSERVER_CONFIG.layers.build),
         this.getFeatures(GEOSERVER_CONFIG.layers.chmergr),
         this.getFeatures(GEOSERVER_CONFIG.layers.chspoint),
         this.getFeatures(GEOSERVER_CONFIG.layers.link),
         this.getFeatures(GEOSERVER_CONFIG.layers.node),
-        this.getFeatures(GEOSERVER_CONFIG.layers.thematicmerge)
+        this.getFeatures(GEOSERVER_CONFIG.layers.thematicmerge),
+        this.getFeatures(GEOSERVER_CONFIG.layers.chbuildclip),
+        this.getFeatures(GEOSERVER_CONFIG.layers.shelter)
       ])
 
-      return { build, chmergr, chspoint, link, node, thematicmerge }
+      return { build, chmergr, chspoint, link, node, thematicmerge, chbuildclip, shelter }
     } catch (error) {
       console.error('[geoService.getAllLayers] 전체 레이어 데이터 조회 실패:', error)
       throw error
