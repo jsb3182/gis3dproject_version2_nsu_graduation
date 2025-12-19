@@ -232,10 +232,10 @@ export default {
 
   methods: {
     mypage() { this.$router.push('/mypage') },
-    hospitalinformation() { this.$router.push('/hospitalInformationApp') },
+    hospitalinformation() { this.$router.push('/GISAnalysis') },
     aichat() { this.$router.push('/aichat') },
-    emergency() { this.$router.push('/emergency') },
-    MyKids() { this.$router.push('/MyKids') },
+    emergency() { this.$router.push('/Userboard') },
+    MyKids() { this.$router.push('/UserGuestbook') },
     goToHome() { this.$router.push('/') },
     goToLogin() { this.$router.push('/login') },
     goToAdminHome() { this.$router.push('/AdminHome') },

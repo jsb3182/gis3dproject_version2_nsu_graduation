@@ -120,16 +120,16 @@ const router = createRouter({
       component: () => import("../views/emergencyYH.vue"),
     },
     {
-      path: "/hospitalInformationApp",
-      name: "hospitalInformationApp",
-      component: () => import("../views/hospitalInformationApp.vue"),
+      path: "/GISAnalysis",
+      name: "GISAnalysis",
+      component: () => import("../views/GISAnalysis.vue"),
     },
     {
       path: "/hospitalInformationCesium",
       name: "hospitalInformationCesium",
       component: () => import("../views/hospitalInformationCesium.vue"),
     },
-     {
+    {
       path: "/AdminEmergencyWrite",
       name: "AdminEmergencyWrite",
       component: () => import("../views/AdminEmergencyWrite.vue"),
@@ -150,7 +150,7 @@ const router = createRouter({
       path: "/AdminHome",
       name: "AdminHome",
       component: () => import("../views/AdminHome.vue"),
-       meta: { requiresAuth: true, requiresAdmin: true },   // 관리자만 접근 가능
+      meta: { requiresAuth: true, requiresAdmin: true },   // 관리자만 접근 가능
     },
     {
       path: "/AdminUserEdit/:uid",
@@ -182,17 +182,17 @@ const router = createRouter({
       props: true
     },
     {
-      path: "/AdminEmergency", 
+      path: "/AdminEmergency",
       name: "AdminEmergency",
       component: () => import("../views/AdminEmergency.vue"),
       meta: { requiresAuth: true, requiresAdmin: true },   // ✅ 추가
     },
-     {
+    {
       path: "/AdminEmergencyorder/:id", //파라미터 아이디 추가
       name: "AdminEmergencyorder",
       component: () => import("../views/AdminEmergencyorder.vue"),
       meta: { requiresAuth: true, requiresAdmin: true },   // ✅ 추가
-      
+
     },
     {
       path: "/AdminManageUser",
@@ -216,6 +216,18 @@ const router = createRouter({
       path: "/AdminFeedback",
       name: "AdminFeedback",
       component: () => import("../views/AdminFeedback.vue"),
+      meta: { requiresAuth: true, requiresAdmin: true },
+    },
+      {
+      path: "/Userboard",
+      name: "Userboard",
+      component: () => import("../views/Userboard.vue"),
+      meta: { requiresAuth: true, requiresAdmin: true },
+    },
+      {
+      path: "/UserGuestbook",
+      name: "UserGuestbook",
+      component: () => import("../views/UserGuestbook.vue"),
       meta: { requiresAuth: true, requiresAdmin: true },
     },
   ],
