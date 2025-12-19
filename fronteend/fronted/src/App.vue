@@ -8,10 +8,10 @@
         <!-- 좌측: 로고 + 홈 버튼 -->
         <div class="d-flex align-items-center">
           <button @click="goToHome" class="btn btn-link p-0 border-0">
-            <img src="@/assets/kid_logo.png" alt="logo" class="me-2"
+            <img src="@/assets/nsu2.svg" alt="logo" class="me-2"
               style="width:50px;height:50px;vertical-align:middle;" />
           </button>
-          <span class="fw-bold fs-5 text-dark">아이119</span>
+          <span class="fw-bold fs-5 text-dark">남서울 대학교 캡스톤 디자인</span>
         </div>
 
         <!-- 우측: 마이페이지 버튼 (햄버거 메뉴 아이콘) -->
@@ -149,11 +149,8 @@
           <button @click="goToHome"
             class="nav-link d-flex flex-column align-items-center justify-content-center py-2 text-gray"
             :class="{ 'bg-light': $route.path === '/' }">
-            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24">
-              <path fill="currentColor"
-                d="M11 0v3h2V0zM7.88 1.46L6.46 2.87L8.59 5L10 3.58zm8.24 0L14 3.58L15.41 5l2.13-2.12zM12 5a2 2 0 0 0-2 2v1H6.5c-.66 0-1.22.42-1.42 1L3 15v8a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1h12v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-8l-2.08-6c-.2-.58-.76-1-1.42-1H14V7a2 2 0 0 0-2-2M6.5 9.5h11L19 14H5zm0 6.5A1.5 1.5 0 0 1 8 17.5A1.5 1.5 0 0 1 6.5 19A1.5 1.5 0 0 1 5 17.5A1.5 1.5 0 0 1 6.5 16m11 0a1.5 1.5 0 0 1 1.5 1.5a1.5 1.5 0 0 1-1.5 1.5a1.5 1.5 0 0 1-1.5-1.5a1.5 1.5 0 0 1 1.5-1.5" />
-            </svg>
-            <small class="mt-1 text-nowrap text-medium">응급실</small>
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3L4 9v12h16V9zm-2 7h4v9h-4zm6 0h2v3h-2zm-.67-2H8.67L12 5.5zM8 10v3H6v-3zm-2 5h2v4H6zm10 4v-4h2v4z"/></svg>
+            <small class="mt-1 text-nowrap text-medium">주변 대피소</small>
           </button>
         </li>
 
@@ -161,11 +158,25 @@
           <button @click="hospitalinformation"
             class="nav-link d-flex flex-column align-items-center justify-content-center py-2 text-gray"
             :class="{ 'bg-light': $route.path === '/hospitalInformationApp' }">
-            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24">
-              <path fill="currentColor"
-                d="M2 22V7a1 1 0 0 1 1-1h4V2h10v4h4a1 1 0 0 1 1 1v15h-8v-5h-4v5zM9 4v6h2V8h2v2h2V4h-2v2h-2V4zM4 20h4v-3H4zm0-5h4v-3H4zm12 5h4v-3h-4zm0-5h4v-3h-4zm-6 0h4v-3h-4z" />
-            </svg>
-            <small class="mt-1 text-nowrap text-medium">의료시설</small>
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" aria-label="공간분석">
+  <!-- Grid -->
+  <path fill="currentColor" d="M4 4h16v16H4z" opacity=".15"/>
+  <path fill="currentColor" d="M4 4h16v2H4zm0 5h16v2H4zm0 5h16v2H4zm0 5h16v2H4z" opacity=".35"/>
+  <path fill="currentColor" d="M4 4h2v16H4zm5 0h2v16H9zm5 0h2v16h-2zm5 0h2v16h-2z" opacity=".25"/>
+
+  <!-- Buffer circle (더 뒤로 보이게) -->
+  <path fill="currentColor" d="M16 14a4.5 4.5 0 1 0 0 9a4.5 4.5 0 0 0 0-9" opacity=".08"/>
+
+  <!-- Pin (앞으로 강조) -->
+  <path
+    d="M16 13.8c-1.8 0-3.2 1.46-3.2 3.25c0 2.45 3.2 5.75 3.2 5.75s3.2-3.3 3.2-5.75c0-1.79-1.4-3.25-3.2-3.25m0 4.5a1.3 1.3 0 1 1 0-2.6a1.3 1.3 0 0 1 0 2.6z"
+    fill="currentColor"
+    stroke="#ffffff"
+    stroke-width="1.2"
+  />
+</svg>
+
+            <small class="mt-1 text-nowrap text-medium">공간분석</small>
           </button>
         </li>
 
@@ -185,11 +196,8 @@
           <button @click="emergency"
             class="nav-link d-flex flex-column align-items-center justify-content-center py-2 text-gray"
             :class="{ 'bg-light': $route.path === '/emergency' }">
-            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24">
-              <path fill="currentColor"
-                d="M16.5 2.83c-1.74 0-3.41.81-4.5 2.07c-1.09-1.26-2.76-2.07-4.5-2.07c-3.08 0-5.5 2.41-5.5 5.5c0 3.77 3.4 6.86 8.55 11.53L12 21.17l1.45-1.31C18.6 15.19 22 12.1 22 8.33c0-3.09-2.42-5.5-5.5-5.5m-4.5 15v-4H9l3-7v4h3" />
-            </svg>
-            <small class="mt-1 text-nowrap text-medium">응급처치</small>
+           <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2.5L9.53 5h5zM4 7v13h16V7zm8-7l5 5h3a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h3zM7 18v-4h5v4zm7-1v-7h4v7zm-8-5V9h5v3z"/></svg>
+            <small class="mt-1 text-nowrap text-medium">사용자 게시판</small>
           </button>
         </li>
 
@@ -201,7 +209,7 @@
               <path fill="currentColor"
                 d="M13.07 10.41a5 5 0 0 0 0-5.82A3.4 3.4 0 0 1 15 4a3.5 3.5 0 0 1 0 7a3.4 3.4 0 0 1-1.93-.59M5.5 7.5A3.5 3.5 0 1 1 9 11a3.5 3.5 0 0 1-3.5-3.5m2 0A1.5 1.5 0 1 0 9 6a1.5 1.5 0 0 0-1.5 1.5M16 17v2H2v-2s0-4 7-4s7 4 7 4m-2 0c-.14-.78-1.33-2-5-2s-4.93 1.31-5 2m11.95-4A5.32 5.32 0 0 1 18 17v2h4v-2s0-3.63-6.06-4Z" />
             </svg>
-            <small class="mt-1 text-nowrap text-medium">내 아이</small>
+            <small class="mt-1 text-nowrap text-medium">방문록</small>
           </button>
         </li>
       </ul>
