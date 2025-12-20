@@ -77,7 +77,7 @@
 
           <!-- 대피소 폴리곤 -->
           <div class="d-flex align-items-center gap-2">
-            <div class="rounded" style="width: 12px; height: 12px; background-color: orange;"></div>
+            <div class="rounded" style="width: 12px; height: 12px; background-color: #FF0000; border: 2px solid yellow;"></div>
             <span>대피소 건물</span>
           </div>
 
@@ -373,26 +373,29 @@ const showShelters = async () => {
 
           // 3D 원기둥 엔티티 추가
           const entity = viewer.entities.add({
-            position: Cesium.Cartesian3.fromDegrees(lon, lat, 25),  // 지면에서 약간 떠있게
+            position: Cesium.Cartesian3.fromDegrees(lon, lat, 40),  // 건물 위에 띄우기
             cylinder: {
-              length: 50,  // 원기둥 높이를 더 높게
-              topRadius: 8,
-              bottomRadius: 8,
-              material: Cesium.Color.RED.withAlpha(0.8),
+              length: 80,  // 원기둥 높이를 매우 높게 (랜드마크처럼)
+              topRadius: 10,
+              bottomRadius: 10,
+              material: Cesium.Color.fromCssColorString('#FF0000'),  // 진한 빨간색 (투명도 없음)
               outline: true,
-              outlineColor: Cesium.Color.WHITE,
-              outlineWidth: 2
+              outlineColor: Cesium.Color.YELLOW,  // 노란색 외곽선으로 더 눈에 띄게
+              outlineWidth: 3
             },
             label: {
               text: name,
-              font: '14px sans-serif',
-              fillColor: Cesium.Color.WHITE,
+              font: 'bold 18px sans-serif',  // 더 크게
+              fillColor: Cesium.Color.YELLOW,  // 노란색 텍스트
               outlineColor: Cesium.Color.BLACK,
-              outlineWidth: 2,
+              outlineWidth: 3,
               style: Cesium.LabelStyle.FILL_AND_OUTLINE,
               verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-              pixelOffset: new Cesium.Cartesian2(0, -35),
-              disableDepthTestDistance: Number.POSITIVE_INFINITY
+              pixelOffset: new Cesium.Cartesian2(0, -50),  // 더 위로
+              disableDepthTestDistance: Number.POSITIVE_INFINITY,
+              showBackground: true,  // 배경 표시
+              backgroundColor: Cesium.Color.fromCssColorString('#FF0000'),  // 진한 빨간 배경
+              backgroundPadding: new Cesium.Cartesian2(7, 5)  // 배경 패딩
             },
             properties: {
               featureData: feature,
@@ -594,26 +597,29 @@ const showAll = async () => {
           const [lon, lat] = feature.geometry.coordinates
 
           const entity = viewer.entities.add({
-            position: Cesium.Cartesian3.fromDegrees(lon, lat, 25),  // 지면에서 약간 떠있게
+            position: Cesium.Cartesian3.fromDegrees(lon, lat, 40),  // 건물 위에 띄우기
             cylinder: {
-              length: 50,  // 원기둥 높이를 더 높게
-              topRadius: 8,
-              bottomRadius: 8,
-              material: Cesium.Color.RED.withAlpha(0.8),
+              length: 80,  // 원기둥 높이를 매우 높게 (랜드마크처럼)
+              topRadius: 10,
+              bottomRadius: 10,
+              material: Cesium.Color.fromCssColorString('#FF0000'),  // 진한 빨간색
               outline: true,
-              outlineColor: Cesium.Color.WHITE,
-              outlineWidth: 2
+              outlineColor: Cesium.Color.YELLOW,  // 노란색 외곽선으로 더 눈에 띄게
+              outlineWidth: 3
             },
             label: {
               text: feature.properties.name || '대피소',
-              font: '14px sans-serif',
-              fillColor: Cesium.Color.WHITE,
+              font: 'bold 16px sans-serif',  // 굵게, 크게
+              fillColor: Cesium.Color.YELLOW,  // 노란색 텍스트
               outlineColor: Cesium.Color.BLACK,
-              outlineWidth: 2,
+              outlineWidth: 3,
               style: Cesium.LabelStyle.FILL_AND_OUTLINE,
               verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-              pixelOffset: new Cesium.Cartesian2(0, -35),
-              disableDepthTestDistance: Number.POSITIVE_INFINITY
+              pixelOffset: new Cesium.Cartesian2(0, -50),  // 더 위로
+              disableDepthTestDistance: Number.POSITIVE_INFINITY,
+              showBackground: true,  // 배경 표시
+              backgroundColor: Cesium.Color.RED.withAlpha(0.7),  // 빨간 배경
+              backgroundPadding: new Cesium.Cartesian2(7, 5)  // 배경 패딩
             },
             properties: {
               featureData: feature,
@@ -791,21 +797,63 @@ const showAll = async () => {
       })
     }
 
-    // shelter (대피소 폴리곤) - 주황색 폴리곤
+    // shelter (대피소 포인트) - 진한 빨간색 원기둥 (98개!)
+    console.log('[DEBUG] shelter 레이어 데이터:', layers.shelter)
+    console.log('[DEBUG] shelter features 개수:', layers.shelter?.features?.length || 0)
+
     if (layers.shelter && layers.shelter.features) {
-      layers.shelter.features.forEach(feature => {
-        if (feature.geometry.type === 'Polygon') {
+      console.log('[DEBUG] shelter 첫 번째 feature:', layers.shelter.features[0])
+      console.log('[DEBUG] shelter geometry 타입들:', layers.shelter.features.map(f => f.geometry.type))
+
+      layers.shelter.features.forEach((feature) => {
+        if (feature.geometry.type === 'Point') {
+          const [lon, lat] = feature.geometry.coordinates
+          const name = feature.properties.name || feature.properties.vt_nm || '대피소'
+
+          // 빨간 원기둥으로 표시 (chspoint와 구별하기 위해 약간 다르게)
+          const entity = viewer.entities.add({
+            position: Cesium.Cartesian3.fromDegrees(lon, lat, 45),  // 약간 더 높게
+            cylinder: {
+              length: 90,  // 90m로 더 높게
+              topRadius: 12,
+              bottomRadius: 12,
+              material: Cesium.Color.fromCssColorString('#FF0000'),  // 순수 빨간색
+              outline: true,
+              outlineColor: Cesium.Color.YELLOW,
+              outlineWidth: 4  // 더 두껍게
+            },
+            label: {
+              text: name,
+              font: 'bold 20px sans-serif',  // 더 크고 굵게
+              fillColor: Cesium.Color.YELLOW,
+              outlineColor: Cesium.Color.BLACK,
+              outlineWidth: 3,
+              style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+              verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+              pixelOffset: new Cesium.Cartesian2(0, -55),
+              disableDepthTestDistance: Number.POSITIVE_INFINITY,
+              showBackground: true,
+              backgroundColor: Cesium.Color.fromCssColorString('#FF0000'),
+              backgroundPadding: new Cesium.Cartesian2(8, 6)
+            },
+            properties: {
+              featureData: feature,
+              layerType: 'shelter'
+            }
+          })
+          shelterEntities.push(entity)
+        } else if (feature.geometry.type === 'Polygon') {
           const entity = viewer.entities.add({
             polygon: {
               hierarchy: Cesium.Cartesian3.fromDegreesArray(
                 feature.geometry.coordinates[0].flatMap(coord => coord)
               ),
-              material: Cesium.Color.ORANGE.withAlpha(0.7),
+              material: Cesium.Color.fromCssColorString('#FF0000'),
               outline: true,
-              outlineColor: Cesium.Color.DARKORANGE,
-              outlineWidth: 2,
+              outlineColor: Cesium.Color.YELLOW,
+              outlineWidth: 3,
               height: 0,
-              extrudedHeight: 35  // 대피소는 더 높게
+              extrudedHeight: 50
             },
             properties: {
               featureData: feature,
@@ -820,12 +868,12 @@ const showAll = async () => {
                 hierarchy: Cesium.Cartesian3.fromDegreesArray(
                   polygonCoords[0].flatMap(coord => coord)
                 ),
-                material: Cesium.Color.ORANGE.withAlpha(0.7),
+                material: Cesium.Color.fromCssColorString('#FF0000'),
                 outline: true,
-                outlineColor: Cesium.Color.DARKORANGE,
-                outlineWidth: 2,
+                outlineColor: Cesium.Color.YELLOW,
+                outlineWidth: 3,
                 height: 0,
-                extrudedHeight: 35  // 대피소는 더 높게
+                extrudedHeight: 50
               },
               properties: {
                 featureData: feature,
@@ -836,6 +884,8 @@ const showAll = async () => {
           })
         }
       })
+
+      console.log(`[DEBUG] shelter 엔티티 ${layers.shelter.features.length}개 추가 완료!`)
     }
 
     // chbuildclip (천안시 건물) - 회색 3D 건물
