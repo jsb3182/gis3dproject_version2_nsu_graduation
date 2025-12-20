@@ -3,8 +3,7 @@
     style="height: calc(100vh - 140px);">
 
     <!-- Cesium 3D 지도 :: start -->
-    <div class="cesium-container position-fixed top-0 start-0 w-100"
-      style="height:100dvh; z-index:0;">
+    <div class="cesium-container position-fixed top-0 start-0 w-100" style="height:100dvh; z-index:0;">
       <div ref="cesiumContainer" class="cesium-viewer"></div>
 
       <!-- 로딩 오버레이 -->
@@ -20,48 +19,33 @@
     <!-- 상단 조회 버튼 :: start -->
     <div class="position-fixed start-0 p-3" style="top: calc(var(--header-h) + 8px); z-index: 2;">
       <div class="pe-auto">
-        <button class="btn-light border rounded-pill px-2 ms-1 shadow-sm text-bold top-button"
-          @click="showShelters()"
+        <button class="btn-light border rounded-pill px-2 ms-1 shadow-sm text-bold top-button" @click="showShelters()"
           :class="{ 'btn-primary text-white': currentListType === '대피소' }">
           🏠 민방위대피소
         </button>
-        <button class="btn-light border rounded-pill px-2 ms-1 shadow-sm text-bold top-button"
-          @click="showBuildings()"
+        <button class="btn-light border rounded-pill px-2 ms-1 shadow-sm text-bold top-button" @click="showBuildings()"
           :class="{ 'btn-primary text-white': currentListType === '건물' }">
           🏢 건물
         </button>
-        <button class="btn-light border rounded-pill px-2 ms-1 shadow-sm text-bold top-button"
-          @click="showRoads()"
+        <button class="btn-light border rounded-pill px-2 ms-1 shadow-sm text-bold top-button" @click="showRoads()"
           :class="{ 'btn-primary text-white': currentListType === '도로' }">
           🛣️ 도로
         </button>
-        <button class="btn-light border rounded-pill px-2 ms-1 shadow-sm text-bold top-button"
-          @click="showAll()">
+        <button class="btn-light border rounded-pill px-2 ms-1 shadow-sm text-bold top-button" @click="showAll()">
           🌐 전체보기
         </button>
       </div>
     </div>
     <!-- 상단 조회 버튼 :: end -->
 
-    <!-- 내 위치 & 새로고침 버튼 :: start -->
+    <!-- 천안시 전체보기 버튼 :: start -->
     <div class="position-fixed end-0 p-3" style="top: calc(var(--header-h) + 8px); z-index: 2;">
-      <button type="button" class="btn btn-primary border rounded-circle shadow-sm mb-2"
-        @click="goToMyLocation()"
-        style="width: 48px; height: 48px; padding: 0;"
-        title="내 위치로 이동">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-          <path fill="currentColor"
-            d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4s4-1.79 4-4s-1.79-4-4-4m8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7s7 3.13 7 7s-3.13 7-7 7" />
-        </svg>
-      </button>
-      <button type="button" class="btn btn-secondary border rounded-circle shadow-sm"
-        @click="goToCheonan()"
-        style="width: 48px; height: 48px; padding: 0;"
-        title="천안시 전체보기">
+      <button type="button" class="btn btn-secondary border rounded-circle shadow-sm" @click="goToCheonan()"
+        style="width: 48px; height: 48px; padding: 0;" title="천안시 전체보기">
         🏙️
       </button>
     </div>
-    <!-- 내 위치 & 새로고침 버튼 :: end -->
+    <!-- 천안시 전체보기 버튼 :: end -->
 
     <!-- 범례 (Legend) :: start -->
     <div class="position-fixed start-0 p-3" style="bottom: 280px; z-index: 2;">
@@ -77,13 +61,15 @@
 
           <!-- 대피소 폴리곤 -->
           <div class="d-flex align-items-center gap-2">
-            <div class="rounded" style="width: 12px; height: 12px; background-color: #FF0000; border: 2px solid yellow;"></div>
+            <div class="rounded"
+              style="width: 12px; height: 12px; background-color: #FF0000; border: 2px solid yellow;"></div>
             <span>대피소 건물</span>
           </div>
 
           <!-- 천안시 건물 -->
           <div class="d-flex align-items-center gap-2">
-            <div class="rounded" style="width: 12px; height: 12px; background-color: lightgray; border: 1px solid gray;"></div>
+            <div class="rounded"
+              style="width: 12px; height: 12px; background-color: lightgray; border: 1px solid gray;"></div>
             <span>천안시 건물</span>
           </div>
 
@@ -101,13 +87,17 @@
 
           <!-- 지적도 -->
           <div class="d-flex align-items-center gap-2">
-            <div class="rounded" style="width: 12px; height: 12px; background-color: rgba(128, 0, 128, 0.3); border: 1px solid purple;"></div>
+            <div class="rounded"
+              style="width: 12px; height: 12px; background-color: rgba(128, 0, 128, 0.3); border: 1px solid purple;">
+            </div>
             <span>지적도</span>
           </div>
 
           <!-- 주제도 -->
           <div class="d-flex align-items-center gap-2">
-            <div class="rounded" style="width: 12px; height: 12px; background-color: rgba(0, 255, 255, 0.3); border: 1px solid darkcyan;"></div>
+            <div class="rounded"
+              style="width: 12px; height: 12px; background-color: rgba(0, 255, 255, 0.3); border: 1px solid darkcyan;">
+            </div>
             <span>주제도</span>
           </div>
         </div>
@@ -186,17 +176,25 @@
               <i class="bi bi-geo-alt me-1"></i>{{ item.address }}
             </p>
 
+            <p class="mb-1 text-muted small" v-if="item.facilityType">
+              <strong>시설구분:</strong> {{ item.facilityType }}
+            </p>
+
+            <p class="mb-1 text-muted small" v-if="item.buildingType">
+              <strong>건물용도:</strong> {{ item.buildingType }}
+            </p>
+
             <p class="mb-1 text-muted small" v-if="item.capacity">
               <strong>수용인원:</strong> {{ item.capacity }}명
             </p>
 
-            <p class="mb-1 text-muted small" v-if="item.area">
-              <strong>면적:</strong> {{ item.area }}㎡
+            <p class="mb-1 text-muted small" v-if="item.buildingArea">
+              <strong>건축면적:</strong> {{ item.buildingArea }}㎡
             </p>
 
-            <div class="text-muted small d-flex align-items-center" v-if="item.distance">
-              <span><i class="bi bi-geo-alt me-1"></i> {{ item.distance }}km</span>
-            </div>
+            <p class="mb-1 text-muted small" v-if="item.totalArea">
+              <strong>연면적:</strong> {{ item.totalArea }}㎡
+            </p>
           </div>
         </div>
 
@@ -271,6 +269,27 @@ const initCesium = async () => {
       // Bing Maps Aerial with Labels (고해상도 위성 이미지)
       imageryProvider: await Cesium.IonImageryProvider.fromAssetId(3)
     })
+
+    // ========================================================================
+    // 브이월드 3D 건물 타일셋 추가
+    // ========================================================================
+    try {
+      const vworld3DTileset = await Cesium.Cesium3DTileset.fromUrl(
+        'https://xdworld.vworld.kr/3d/middle/0/data/{lod}/{tileid}.json',
+        {
+          // 브이월드 3D 건물 스타일링
+          maximumScreenSpaceError: 16,  // 화질 조절 (낮을수록 고화질, 기본값 16)
+        }
+      )
+
+      // 3D 타일셋을 씬에 추가
+      viewer.scene.primitives.add(vworld3DTileset)
+
+      console.log('[CesiumMap] 브이월드 3D 건물 타일셋 로드 완료')
+    } catch (error) {
+      console.error('[CesiumMap] 브이월드 3D 건물 로드 실패:', error)
+      // 3D 건물 로드 실패해도 계속 진행
+    }
 
     // 배경색 설정
     viewer.scene.backgroundColor = Cesium.Color.TRANSPARENT
@@ -385,17 +404,22 @@ const showShelters = async () => {
             },
             label: {
               text: name,
-              font: 'bold 18px sans-serif',  // 더 크게
+              font: '5px sans-serif',  // 더 크게
               fillColor: Cesium.Color.YELLOW,  // 노란색 텍스트
               outlineColor: Cesium.Color.BLACK,
-              outlineWidth: 3,
+              outlineWidth: 2,
               style: Cesium.LabelStyle.FILL_AND_OUTLINE,
               verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
               pixelOffset: new Cesium.Cartesian2(0, -50),  // 더 위로
               disableDepthTestDistance: Number.POSITIVE_INFINITY,
-              showBackground: true,  // 배경 표시
-              backgroundColor: Cesium.Color.fromCssColorString('#FF0000'),  // 진한 빨간 배경
-              backgroundPadding: new Cesium.Cartesian2(7, 5)  // 배경 패딩
+              showBackground: false,         // 4. 배경 박스 제거 (true -> false)
+              verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+              pixelOffset: new Cesium.Cartesian2(0, -20), // 5. 위치를 마커와 가깝게 조정
+              // label 설정 내부에 추가
+              disableDepthTestDistance: Number.POSITIVE_INFINITY,
+              heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+              // 아래 옵션은 viewer 설정이나 레이어 수준에서 지원될 때 효과적입니다.
+
             },
             properties: {
               featureData: feature,
@@ -609,7 +633,7 @@ const showAll = async () => {
             },
             label: {
               text: feature.properties.name || '대피소',
-              font: 'bold 16px sans-serif',  // 굵게, 크게
+              font: 'bold 10px sans-serif',  // 굵게, 크게
               fillColor: Cesium.Color.YELLOW,  // 노란색 텍스트
               outlineColor: Cesium.Color.BLACK,
               outlineWidth: 3,
@@ -797,51 +821,74 @@ const showAll = async () => {
       })
     }
 
-    // shelter (대피소 포인트) - 진한 빨간색 원기둥 (98개!)
-    console.log('[DEBUG] shelter 레이어 데이터:', layers.shelter)
-    console.log('[DEBUG] shelter features 개수:', layers.shelter?.features?.length || 0)
-
+    // ========================================================================
+    // shelter 레이어 (천안시 대피소 98개) - GeoServer에서 가져온 실제 대피소 데이터
+    // ========================================================================
     if (layers.shelter && layers.shelter.features) {
-      console.log('[DEBUG] shelter 첫 번째 feature:', layers.shelter.features[0])
-      console.log('[DEBUG] shelter geometry 타입들:', layers.shelter.features.map(f => f.geometry.type))
-
       layers.shelter.features.forEach((feature) => {
         if (feature.geometry.type === 'Point') {
           const [lon, lat] = feature.geometry.coordinates
+          // GeoServer의 속성명에 따라 다양한 필드명 지원 (name, vt_nm 등)
           const name = feature.properties.name || feature.properties.vt_nm || '대피소'
 
-          // 빨간 원기둥으로 표시 (chspoint와 구별하기 위해 약간 다르게)
+          // 3D 원기둥 마커로 대피소 위치 표시
           const entity = viewer.entities.add({
-            position: Cesium.Cartesian3.fromDegrees(lon, lat, 45),  // 약간 더 높게
+            position: Cesium.Cartesian3.fromDegrees(lon, lat, 45),  // 지면에서 45m 높이
             cylinder: {
-              length: 90,  // 90m로 더 높게
-              topRadius: 12,
-              bottomRadius: 12,
-              material: Cesium.Color.fromCssColorString('#FF0000'),  // 순수 빨간색
-              outline: true,
-              outlineColor: Cesium.Color.YELLOW,
-              outlineWidth: 4  // 더 두껍게
+              length: 90,  // 원기둥 높이 90m (랜드마크처럼 눈에 잘 띄도록)
+              topRadius: 12,  // 상단 반지름 12m
+              bottomRadius: 12,  // 하단 반지름 12m
+              material: Cesium.Color.fromCssColorString('#FF0000'),  // 순수 빨간색 (투명도 없음)
+              outline: true,  // 외곽선 표시
+              outlineColor: Cesium.Color.YELLOW,  // 노란색 외곽선
+              outlineWidth: 4  // 외곽선 두께 4px
             },
             label: {
-              text: name,
-              font: 'bold 20px sans-serif',  // 더 크고 굵게
-              fillColor: Cesium.Color.YELLOW,
-              outlineColor: Cesium.Color.BLACK,
-              outlineWidth: 3,
+              text: name,  // 대피소 이름 표시
+              font: 'bold 14px sans-serif',  // 굵은 14px 글꼴
+              fillColor: Cesium.Color.YELLOW,  // 노란색 텍스트
+              outlineColor: Cesium.Color.BLACK,  // 검은색 외곽선
+              outlineWidth: 2,  // 텍스트 외곽선 두께
               style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-              verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-              pixelOffset: new Cesium.Cartesian2(0, -55),
-              disableDepthTestDistance: Number.POSITIVE_INFINITY,
-              showBackground: true,
-              backgroundColor: Cesium.Color.fromCssColorString('#FF0000'),
-              backgroundPadding: new Cesium.Cartesian2(8, 6)
+              verticalOrigin: Cesium.VerticalOrigin.BOTTOM,  // 라벨을 마커 위에 배치
+              pixelOffset: new Cesium.Cartesian2(0, -55),  // 원기둥 위로 55px 띄움
+              disableDepthTestDistance: Number.POSITIVE_INFINITY,  // 항상 보이게 (다른 객체에 가려지지 않음)
+              showBackground: true,  // 배경 박스 표시
+              backgroundColor: Cesium.Color.fromCssColorString('#FF0000').withAlpha(0.7),  // 빨간 배경 (70% 투명도)
+              backgroundPadding: new Cesium.Cartesian2(7, 5),  // 배경 패딩
+
+              // *** 라벨 겹침 방지 설정 ***
+              // scaleByDistance: 카메라 거리에 따라 라벨 크기 조절
+              // NearFarScalar(near거리, near배율, far거리, far배율)
+              scaleByDistance: new Cesium.NearFarScalar(1000, 1.0, 15000, 0.3),
+              // 1000m 거리: 100% 크기, 15000m 거리: 30% 크기로 축소
+
+              // distanceDisplayCondition: 특정 거리에서만 라벨 표시
+              distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 20000)
+              // 0m ~ 20000m(20km) 거리에서만 라벨 표시, 그 이상 멀어지면 숨김
             },
             properties: {
-              featureData: feature,
-              layerType: 'shelter'
+              featureData: feature,  // GeoServer에서 가져온 원본 데이터 저장
+              layerType: 'shelter'  // 레이어 타입 식별자
             }
           })
-          shelterEntities.push(entity)
+          shelterEntities.push(entity)  // 나중에 제거할 수 있도록 배열에 저장
+
+          // *** 바텀시트 리스트에 대피소 정보 추가 ***
+          itemsList.push({
+            id: feature.properties.gid || feature.properties.objectid || Math.random(),
+            name,
+            // DB 테이블 컬럼명에 맞게 매핑
+            address: feature.properties.a4 || feature.properties.dt_address || '주소 정보 없음',  // A4: 주소
+            buildingType: feature.properties.a9 || '정보 없음',  // A9: 건물 용도
+            buildingArea: feature.properties.a12 || '정보 없음',  // A12: 건축면적
+            totalArea: feature.properties.a13 || '정보 없음',  // A13: 연면적
+            capacity: feature.properties.a22 || '정보 없음',  // A22: 수용인원
+            facilityType: feature.properties.vt_acmdfclty_se_nm || feature.properties.type || '대피소',  // 시설구분명
+            lat,  // 위도
+            lon,  // 경도
+            properties: feature.properties  // 모든 속성 정보를 저장 (클릭 시 상세 정보 표시용)
+          })
         } else if (feature.geometry.type === 'Polygon') {
           const entity = viewer.entities.add({
             polygon: {
@@ -982,8 +1029,9 @@ const showAll = async () => {
       })
     }
 
-    items.value = itemsList
-    console.log(`[CesiumMap] 전체 데이터 로드 완료`)
+    // *** 바텀시트 리스트는 shelter(대피소) 정보만 표시 ***
+    items.value = itemsList  // itemsList는 위에서 shelter 레이어 데이터만 추가됨
+    console.log(`[CesiumMap] 전체 데이터 로드 완료 - 대피소 ${itemsList.length}개`)
 
   } catch (error) {
     console.error('[CesiumMap] 전체 로드 실패:', error)
@@ -1003,7 +1051,9 @@ const clearEntities = () => {
   items.value = []
 }
 
-// 클릭 이벤트 핸들러
+// ========================================================================
+// 클릭 이벤트 핸들러 - 건물/라벨 클릭 시 상세 정보 표시
+// ========================================================================
 const registerClickHandler = () => {
   viewer.screenSpaceEventHandler.setInputAction((click) => {
     const pickedObject = viewer.scene.pick(click.position)
@@ -1013,14 +1063,57 @@ const registerClickHandler = () => {
 
       if (entity.properties && entity.properties.featureData) {
         const feature = entity.properties.featureData.getValue()
+        const layerType = entity.properties.layerType.getValue()
 
-        if (feature.geometry.type === 'Point') {
+        // shelter 레이어 클릭 시
+        if (layerType === 'shelter') {
+          const [lon, lat] = feature.geometry.coordinates
+          const props = feature.properties
+
+          // 바텀시트에 단일 대피소 정보 표시
+          currentListType.value = '대피소'
+          items.value = [{
+            id: props.gid || props.objectid || Math.random(),
+            name: props.vt_nm || props.name || '대피소',
+            // DB 컬럼명에 맞게 매핑
+            address: props.a4 || props.dt_address || '주소 정보 없음',  // A4: 주소
+            buildingType: props.a9 || '정보 없음',  // A9: 건물 용도
+            buildingArea: props.a12 || '정보 없음',  // A12: 건축면적
+            totalArea: props.a13 || '정보 없음',  // A13: 연면적
+            capacity: props.a22 || '정보 없음',  // A22: 수용인원
+            facilityType: props.vt_acmdfclty_se_nm || props.type || '대피소',  // 시설구분명
+            lat,
+            lon,
+            properties: props  // 모든 속성 저장
+          }]
+
+          // 바텀시트 열기
+          sheetHeightRatio.value = 1
+
+          // 카메라를 해당 대피소로 이동
+          viewer.camera.flyTo({
+            destination: Cesium.Cartesian3.fromDegrees(lon, lat, 1500),
+            orientation: {
+              heading: Cesium.Math.toRadians(0),
+              pitch: Cesium.Math.toRadians(-45),
+              roll: 0
+            },
+            duration: 2
+          })
+        }
+        // 다른 레이어 클릭 시 (건물, 도로 등)
+        else if (feature.geometry.type === 'Point') {
           viewer.camera.flyTo({
             destination: Cesium.Cartesian3.fromDegrees(
               feature.geometry.coordinates[0],
               feature.geometry.coordinates[1],
               3000
             ),
+            orientation: {
+              heading: Cesium.Math.toRadians(0),
+              pitch: Cesium.Math.toRadians(-45),
+              roll: 0
+            },
             duration: 2
           })
         }
@@ -1046,27 +1139,6 @@ const goToCheonan = () => {
     },
     duration: 2
   })
-}
-
-// 내 위치로 이동 (3D 뷰)
-const goToMyLocation = () => {
-  if (userLocation.value && viewer) {
-    viewer.camera.flyTo({
-      destination: Cesium.Cartesian3.fromDegrees(
-        userLocation.value.lon,
-        userLocation.value.lat,
-        5000
-      ),
-      orientation: {
-        heading: Cesium.Math.toRadians(0),
-        pitch: Cesium.Math.toRadians(-45),  // 3D 뷰
-        roll: 0
-      },
-      duration: 2
-    })
-  } else {
-    alert('위치 정보를 가져올 수 없습니다.')
-  }
 }
 
 // 아이템으로 이동 (3D 뷰)
