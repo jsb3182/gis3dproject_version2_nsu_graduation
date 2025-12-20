@@ -720,7 +720,7 @@ const showAll = async () => {
                 feature.geometry.coordinates.flatMap(coord => coord)
               ),
               width: 3,
-              material: Cesium.Color.YELLOW.withAlpha(0.9),
+              material: Cesium.Color.YELLOW.withAlpha(0.10),
               clampToGround: true
             },
             properties: {
@@ -783,7 +783,7 @@ const showAll = async () => {
               hierarchy: Cesium.Cartesian3.fromDegreesArray(
                 feature.geometry.coordinates[0].flatMap(coord => coord)
               ),
-              material: Cesium.Color.PURPLE.withAlpha(0.5),
+              material: Cesium.Color.PURPLE.withAlpha(0.1),
               outline: true,
               outlineColor: Cesium.Color.PURPLE,
               outlineWidth: 2,
