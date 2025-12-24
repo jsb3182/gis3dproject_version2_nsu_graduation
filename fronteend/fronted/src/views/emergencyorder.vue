@@ -114,7 +114,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getEmergencyData, incrementViews } from '../firebase/emergency.js'
+// import { getEmergencyData, incrementViews } from '../firebase/emergency.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -126,9 +126,23 @@ const showVideo = ref(false)
 const id = computed(() => route.params.id)
 
 onMounted(async () => {
-  try {//조회수 카운팅이 겨처서 두번 되는거 수정함 11.12
-    // emergency.js의 함수 사용
-    item.value = await getEmergencyData(id.value)
+  try {
+    // TODO: 백엔드 API에서 데이터 불러오기
+    console.log(`백엔드 API에서 ID가 ${id.value}인 응급처치 데이터 불러오기`)
+    // item.value = await getEmergencyData(id.value)
+    item.value = {
+      title: "임시 제목",
+      createdAt: new Date(),
+      viewCount: 100,
+      thumbnailUrl: "https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg",
+      youtubeUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      hashtags: ["임시태그1", "임시태그2"],
+      symptomList: ["임시 증상 1", "임시 증상 2"],
+      methodList: ["임시 응급처치 1", "임시 응급처치 2"],
+      reasonList: ["임시 원인 1", "임시 원인 2"],
+      warning: "임시 주의사항"
+    };
+
   } catch (error) {
     console.error('데이터 로드 실패:', error)
   } finally {

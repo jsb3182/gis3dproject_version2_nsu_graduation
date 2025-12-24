@@ -138,9 +138,9 @@
 
 <script setup>
 import { reactive, computed, ref } from 'vue'
-import { auth, db } from '../firebase/index.js'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { doc, setDoc, collection } from 'firebase/firestore'
+// import { auth, db } from '../firebase/index.js'
+// import { createUserWithEmailAndPassword } from 'firebase/auth'
+// import { doc, setDoc, collection } from 'firebase/firestore'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -160,7 +160,7 @@ const tried = ref(false)
 const isLoading = ref(false)
 
 // Firestore의 user 컬렉션 참조
-const USER_COLLECTION = collection(db, 'user')
+// const USER_COLLECTION = collection(db, 'user')
 
 const passwordsMatch = computed(() => form.password && form.password === form.password2)
 
@@ -186,26 +186,9 @@ async function onSubmit() {
   isLoading.value = true
 
   try {
-    // 1. Firebase Auth에 사용자 생성
-    const credential = await createUserWithEmailAndPassword(
-      auth,
-      form.email,
-      form.password
-    )
-    const user = credential.user
-
-    // 2. Firestore의 user 컬렉션에 사용자 정보 저장
-    const userDoc = doc(USER_COLLECTION, user.uid)
-    await setDoc(userDoc, {
-      uid: user.uid,
-      username: form.username,
-      name: form.name,
-      phone: form.phone,
-      agreeTerms: form.agreeTerms,
-      agreeMarketing: form.agreeMarketing,
-      createdAt: new Date().toISOString(),
-    })
-
+    // TODO: 백엔드 API로 회원가입 요청
+    console.log("TODO: 백엔드 API로 회원가입 요청", form)
+    
     // 3. 성공 메시지 표시
     alert('회원가입에 성공하셨습니다. 로그인 해주세요.')
     
@@ -214,22 +197,7 @@ async function onSubmit() {
 
   } catch (err) {
     console.error('회원가입 오류:', err)
-    
-    // Firebase Auth 에러 처리
-    switch (err.code) {
-      case 'auth/invalid-email':
-        alert('이메일을 바르게 입력해주세요.')
-        break
-      case 'auth/weak-password':
-        alert('비밀번호가 너무 쉬워요. 8자 이상으로 설정해주세요.')
-        break
-      case 'auth/email-already-in-use':
-        alert('이미 등록된 이메일입니다.')
-        break
-      default:
-        alert('회원가입에 실패했습니다. 다시 시도해주세요.')
-        break
-    }
+    alert('회원가입에 실패했습니다. 다시 시도해주세요.')
   } finally {
     isLoading.value = false
   }

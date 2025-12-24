@@ -82,8 +82,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { db } from '@/firebase'
-import { collection, getDocs, query, orderBy } from 'firebase/firestore'
+// import { db } from '@/firebase'
+// import { collection, getDocs, query, orderBy } from 'firebase/firestore'
 
 const router = useRouter()
 
@@ -110,28 +110,8 @@ function goToSuggestionDetail(id) {
 async function loadSuggestions() {
   try {
     loading.value = true
-
-    // createdAt 기준 최신순 정렬
-    const q = query(
-      collection(db, 'suggestions'),
-      orderBy('createdAt', 'desc')
-    )
-    const snap = await getDocs(q)
-
-    emergencyFeedbacks.value = snap.docs.map(d => {
-      const data = d.data()
-      return {
-        id: d.id,
-        emergencyTitle: data.title || '(제목 없음)',
-        content: data.content || '(내용 없음)',
-        writer: data.fromEmail || '(이메일 없음)',
-        createdAt: data.createdAt ? data.createdAt.toDate() : null,
-        // 필요하면 여기서 status, adminMemo 등도 들고갈 수 있음
-        status: data.status || '',
-        targetRole: data.targetRole || '',
-        adminMemo: data.adminMemo || ''
-      }
-    })
+    console.log("TODO: 백엔드 API를 통해 건의사항 로드");
+    emergencyFeedbacks.value = [];
   } catch (e) {
     console.error('suggestions 로딩 실패:', e)
   } finally {

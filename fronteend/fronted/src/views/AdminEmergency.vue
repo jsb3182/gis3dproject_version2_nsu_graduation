@@ -213,9 +213,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { db, auth } from '@/firebase'
-import { collection, getDocs, orderBy, query, deleteDoc, doc, getDoc } from 'firebase/firestore'
-import { onAuthStateChanged } from 'firebase/auth'
+// import { db, auth } from '@/firebase'
+// import { collection, getDocs, orderBy, query, deleteDoc, doc, getDoc } from 'firebase/firestore'
+// import { onAuthStateChanged } from 'firebase/auth'
 
 const router = useRouter()
 const keyword = ref('')
@@ -241,18 +241,11 @@ const goToDetail = (id) => router.push({ name: 'AdminEmergencyorder', params: { 
 /* 데이터 */
 async function loadData () {
   try {
-    const q = query(collection(db, 'emergencyData'), orderBy('createdAt', 'desc'))
-    const snapshot = await getDocs(q)
-    items.value = snapshot.docs.map(d => {
-      const v = d.data()
-      return {
-        id: d.id,
-        title: v.title || '(제목 없음)',
-        viewCount: v.viewCount || 0,
-        createdAt: v.createdAt ? v.createdAt.toDate() : null,
-        hashtags: v.hashtags || []   // ✅ 추가
-      }
-    })
+    console.log("TODO: 백엔드 API를 통해 데이터 로드")
+    items.value = [
+      {id: '1', title: '임시 제목 1', viewCount: 100, createdAt: new Date(), hashtags: ['태그1']},
+      {id: '2', title: '임시 제목 2', viewCount: 200, createdAt: new Date(), hashtags: ['태그2']},
+    ];
   } catch (e) {
     console.error('데이터 불러오기 실패:', e)
   } finally {
@@ -266,17 +259,19 @@ onMounted(() => {
 })
 
 async function checkAdminStatus () {
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      currentUserUid.value = user.uid
-      const userDocRef = doc(db, 'users', user.uid)
-      const userDoc = await getDoc(userDocRef)
-      isAdmin.value = !!(userDoc.exists() && (userDoc.data().username || '').toLowerCase().includes('admin'))
-    } else {
-      isAdmin.value = false
-      currentUserUid.value = null
-    }
-  })
+  // onAuthStateChanged(auth, async (user) => {
+  //   if (user) {
+  //     currentUserUid.value = user.uid
+  //     const userDocRef = doc(db, 'users', user.uid)
+  //     const userDoc = await getDoc(userDocRef)
+  //     isAdmin.value = !!(userDoc.exists() && (userDoc.data().username || '').toLowerCase().includes('admin'))
+  //   } else {
+  //     isAdmin.value = false
+  //     currentUserUid.value = null
+  //   }
+  // })
+  console.log("TODO: 백엔드 API를 통해 관리자 상태 확인")
+  isAdmin.value = true;
 }
 
 /* 삭제 */
@@ -285,7 +280,8 @@ async function handleDelete (id) {
   if (!confirm('정말로 이 게시물을 삭제하시겠습니까?')) return
 
   try {
-    await deleteDoc(doc(db, 'emergencyData', id))
+    // await deleteDoc(doc(db, 'emergencyData', id))
+    console.log("TODO: 백엔드 API를 통해 게시물 삭제", id)
     items.value = items.value.filter(v => v.id !== id)
     selectedIds.value.delete(id)
     alert('게시물이 삭제되었습니다.')
@@ -302,7 +298,8 @@ async function bulkDelete () {
 
   try {
     const ids = Array.from(selectedIds.value)
-    await Promise.all(ids.map(id => deleteDoc(doc(db, 'emergencyData', id))))
+    // await Promise.all(ids.map(id => deleteDoc(doc(db, 'emergencyData', id))))
+    console.log("TODO: 백엔드 API를 통해 일괄 삭제", ids)
     items.value = items.value.filter(v => !selectedIds.value.has(v.id))
     selectedIds.value.clear()
     alert('삭제되었습니다.')

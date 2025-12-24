@@ -160,15 +160,15 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { db } from '@/firebase'
-import {
-  collection,
-  getDocs,
-  doc,
-  query,
-  where,
-  writeBatch
-} from 'firebase/firestore'
+// import { db } from '@/firebase'
+// import {
+//   collection,
+//   getDocs,
+//   doc,
+//   query,
+//   where,
+//   writeBatch
+// } from 'firebase/firestore'
 
 const router = useRouter()
 const activeTab = ref('manage')
@@ -193,46 +193,8 @@ function calcAge(birthYear) {
 
 async function loadUsersWithKids() {
   try {
-    const usersSnap = await getDocs(collection(db, 'users'))
-    const kidsSnap = await getDocs(collection(db, 'kidinformation'))
-
-    const kidsByParent = {}
-    kidsSnap.forEach(docSnap => {
-      const data = docSnap.data()
-      const parentUid = data.parentUid
-      if (!parentUid) return
-
-      if (!kidsByParent[parentUid]) kidsByParent[parentUid] = []
-
-      kidsByParent[parentUid].push({
-        id: docSnap.id,
-        name: data.kid || '(이름 없음)',
-        age: calcAge(data.birthYear),
-        gender: data.gender || '-',
-        heightCm:data.heightCm,
-        weightKg:data.weightKg,
-        bloodType:data.bloodType,
-        allergy:data.allergy,
-        medicalHistory:data.medicalHistory,
-        medication:data.medication
-      })
-    })
-
-    usersWithKids.value = usersSnap.docs.map(docSnap => {
-      const u = docSnap.data()
-      const uid = docSnap.id
-      return {
-        uid,
-        email: u.email || '(이메일 없음)',
-        username: u.username || '',
-        name: u.name || '(이름 없음)',
-        phone: u.phone || '',
-        agreeTerms: u.agreeTerms ?? false,
-        agreeMarketing: u.agreeMarketing ?? false,
-        createdAt: u.createdAt ? new Date(u.createdAt) : null,
-        kids: kidsByParent[uid] || []
-      }
-    })
+    console.log("TODO: 백엔드 API를 통해 사용자 및 자녀 정보 로드");
+    usersWithKids.value = [];
   } catch (e) {
     console.error('users + kidinformation 조회 실패:', e)
   }
@@ -250,16 +212,17 @@ const deleteUser = async (user) => {
   if (!ok) return
 
   try {
-    const batch = writeBatch(db)
+    console.log("TODO: 백엔드 API를 통해 사용자 삭제", user.uid);
+    // const batch = writeBatch(db)
 
-    const userRef = doc(db, 'users', user.uid)
-    batch.delete(userRef)
+    // const userRef = doc(db, 'users', user.uid)
+    // batch.delete(userRef)
 
-    const kidQ = query(collection(db, 'kidinformation'), where('parentUid', '==', user.uid))
-    const kidSnap = await getDocs(kidQ)
-    kidSnap.forEach(d => batch.delete(d.ref))
+    // const kidQ = query(collection(db, 'kidinformation'), where('parentUid', '==', user.uid))
+    // const kidSnap = await getDocs(kidQ)
+    // kidSnap.forEach(d => batch.delete(d.ref))
 
-    await batch.commit()
+    // await batch.commit()
     alert('사용자와 자녀 정보가 삭제되었습니다.')
     await loadUsersWithKids()
   } catch (e) {

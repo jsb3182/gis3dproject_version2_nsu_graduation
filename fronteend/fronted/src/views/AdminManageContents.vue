@@ -120,8 +120,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { db } from '@/firebase'
-import { collection, getDocs, doc, deleteDoc, orderBy, query } from 'firebase/firestore'
+// import { db } from '@/firebase'
+// import { collection, getDocs, doc, deleteDoc, orderBy, query } from 'firebase/firestore'
 
 const router = useRouter()
 
@@ -131,22 +131,8 @@ const emergencyList = ref([])
 // 🔹 응급 콘텐츠 목록 로드
 async function loadEmergencyList() {
   try {
-    const q = query(collection(db, 'emergencyData'), orderBy('createdAt', 'desc'))
-    const snap = await getDocs(q)
-
-    emergencyList.value = snap.docs.map((d) => {
-      const data = d.data()
-      return {
-        id: d.id,
-        title: data.title || '(제목 없음)',
-        createdAt: data.createdAt ? data.createdAt.toDate() : null,
-        viewCount: data.viewCount ?? 0,
-        hashtags: data.hashtags || [],
-        thumbnailUrl: data.thumbnailUrl || '',
-        youtubeId: data.youtubeId || '',
-        youtubeUrl: data.youtubeUrl || '',
-      }
-    })
+    console.log("TODO: 백엔드 API를 통해 응급 콘텐츠 목록 로드");
+    emergencyList.value = [];
   } catch (e) {
     console.error('emergencyData 로딩 실패:', e)
   }
@@ -173,12 +159,13 @@ async function deleteEmergency(item) {
   if (!ok) return
 
   try {
-    await deleteDoc(doc(db, 'emergencyData', item.id))
+    console.log("TODO: 백엔드 API를 통해 응급 콘텐츠 삭제", item.id);
+    // await deleteDoc(doc(db, 'emergencyData', item.id))
     alert('콘텐츠가 삭제되었습니다.')
     await loadEmergencyList()
   } catch (e) {
     console.error('응급 교육 콘텐츠 삭제 실패:', e)
-    alert('삭제 중 오류가 발생했습니다. Firestore rules를 확인해주세요.')
+    alert('삭제 중 오류가 발생했습니다.')
   }
 }
 

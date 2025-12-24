@@ -110,18 +110,18 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { db } from '@/firebase'
-import {
-  doc,
-  getDoc,
-  updateDoc,
-  collection,
-  query,
-  where,
-  getDocs,
-  writeBatch
-} from 'firebase/firestore'
-import { serverTimestamp } from 'firebase/firestore'
+// import { db } from '@/firebase'
+// import {
+//   doc,
+//   getDoc,
+//   updateDoc,
+//   collection,
+//   query,
+//   where,
+//   getDocs,
+//   writeBatch
+// } from 'firebase/firestore'
+// import { serverTimestamp } from 'firebase/firestore'
 
 const router = useRouter()
 const route = useRoute()
@@ -145,46 +145,30 @@ onMounted(async () => {
 })
 
 async function loadUser() {
-  const userRef = doc(db, 'users', uid)
-  const snap = await getDoc(userRef)
-  if (snap.exists()) {
-    const data = snap.data()
-    user.value = {
-      uid,
-      email: data.email || data.userEmail || '',
-      username: data.username || data.name || ''
-    }
-  } else {
-    alert('존재하지 않는 사용자입니다.')
-    router.back()
-  }
+  // TODO: 백엔드 API에서 사용자 정보 로드
+  console.log(`TODO: 백엔드 API에서 사용자 정보 로드 for uid: ${uid}`);
+  user.value = {
+    uid,
+    email: 'test@example.com',
+    username: 'testuser'
+  };
 }
 
 async function loadKids() {
-  const q = query(
-    collection(db, 'kidinformation'),
-    where('parentUid', '==', uid)
-  )
-  const snap = await getDocs(q)
-  kids.value = snap.docs.map(d => {
-    const data = d.data()
-    return {
-      id: d.id,
-      name: data.kid || '',
-      birthYear: data.birthYear ?? null,
-      birthMonth: data.birthMonth ?? null,  // 추가
-      birthDay: data.birthDay ?? null,      // 추가
-      gender: data.gender || '',
-      heightCm: data.heightCm ?? null,
-      weightKg: data.weightKg ?? null,
-      bloodType: data.bloodType || '',
-      allergy: data.allergy || '',
-      medicalHistory: data.medicalHistory || '',
-      medication: data.medication || '',
+  // TODO: 백엔드 API에서 자녀 정보 로드
+  console.log(`TODO: 백엔드 API에서 자녀 정보 로드 for uid: ${uid}`);
+  kids.value = [
+    {
+      id: 'kid1',
+      name: '첫째아이',
+      birthYear: 2020,
+      birthMonth: 1,
+      birthDay: 1,
+      gender: '남',
       _isNew: false,
       _isDeleted: false
     }
-  })
+  ];
 }
 
 function formatAge(birthYear) {
@@ -226,48 +210,10 @@ async function saveAll() {
   if (!user.value) return
   saving.value = true
   try {
-    const userRef = doc(db, 'users', uid)
-    await updateDoc(userRef, {
-      username: user.value.username,
-      updatedAt: serverTimestamp()
-    })
-
-    const batch = writeBatch(db)
-
-    for (const k of kids.value) {
-      const baseData = {
-        parentUid: uid,
-        kid: k.name,
-        birthYear: k.birthYear,
-        birthMonth: k.birthMonth,  // 추가
-        birthDay: k.birthDay,      // 추가
-        gender: k.gender,
-        heightCm: k.heightCm,
-        weightKg: k.weightKg,
-        bloodType: k.bloodType,
-        allergy: k.allergy,
-        medicalHistory: k.medicalHistory,
-        medication: k.medication,
-        updatedAt: serverTimestamp()
-      }
-
-      if (k._isNew && !k._isDeleted) {
-        const newRef = doc(collection(db, 'kidinformation'))
-        batch.set(newRef, {
-          ...baseData,
-          createdAt: serverTimestamp()
-        })
-      } else if (!k._isNew && k._isDeleted) {
-        const kidRef = doc(db, 'kidinformation', k.id)
-        batch.delete(kidRef)
-      } else if (!k._isNew && !k._isDeleted) {
-        const kidRef = doc(db, 'kidinformation', k.id)
-        batch.update(kidRef, baseData)
-      }
-    }
-
-    await batch.commit()
-
+    // TODO: 백엔드 API로 사용자 및 자녀 정보 저장
+    console.log('TODO: 백엔드 API로 사용자 정보 저장', user.value);
+    console.log('TODO: 백엔드 API로 자녀 정보 저장', kids.value);
+    
     alert('사용자 정보가 저장되었습니다.')
     router.back()
   } catch (e) {

@@ -80,8 +80,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { db } from '@/firebase'
-import { collection, getDocs, orderBy, query } from 'firebase/firestore'
+// import { db } from '@/firebase'
+// import { collection, getDocs, orderBy, query } from 'firebase/firestore'
 
 // --------------------------------------------
 // ✅ 기본 설정
@@ -107,18 +107,9 @@ const goToWrite = () => {
 // --------------------------------------------
 onMounted(async () => {
   try {
-    const q = query(collection(db, 'emergencyData'), orderBy('createdAt', 'desc'))
-    const snapshot = await getDocs(q)
-
-    items.value = snapshot.docs.map(doc => {
-      const data = doc.data()
-      return {
-        id: doc.id,
-        title: data.title || '(제목 없음)',
-        viewCount: data.viewCount || 0,
-        createdAt: data.createdAt ? data.createdAt.toDate() : null,
-      }
-    })
+    // TODO: 백엔드 API에서 데이터 불러오기
+    console.log('백엔드 API에서 응급처치 데이터 불러오기')
+    items.value = [];
   } catch (e) {
     console.error('데이터 불러오기 실패:', e)
   } finally {

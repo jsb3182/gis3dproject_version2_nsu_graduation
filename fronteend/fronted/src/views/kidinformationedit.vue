@@ -136,7 +136,7 @@
 <script setup>
 import { reactive, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getKid, updateKid, removeKid } from '@/firebase/kid.js'
+// import { getKid, updateKid, removeKid } from '@/firebase/kid.js'
 import kidboyImg from '@/assets/kidboy.png'
 import kidgirlImg from '@/assets/kidgirl.png'
 import kidDefaultImg from '@/assets/kid1.jpg'
@@ -166,18 +166,20 @@ const years = Array.from({ length: 100 }, (_, i) => currentYear - i)
 
 onMounted(async () => {
   try {
-    const kidData = await getKid(kidId)
-    form.name = kidData.kid || ''  // kid 필드 사용
-    form.birthYear = kidData.birthYear || ''
-    form.birthMonth = kidData.birthMonth || ''  // 추가
-    form.birthDay = kidData.birthDay || ''      // 추가
-    form.blood = kidData.bloodType || ''  // bloodType 필드 사용
-    form.meds = kidData.medication || ''  // medication 필드 사용
-    form.height = kidData.heightCm || ''  // heightCm 필드 사용
-    form.weight = kidData.weightKg || ''  // weightKg 필드 사용
-    form.history = kidData.medicalHistory || ''  // medicalHistory 필드 사용
-    form.allergy = kidData.allergy || ''
-    form.gender = kidData.gender || ''
+    // TODO: 백엔드 API에서 아이 정보를 불러오도록 수정
+    console.log(`백엔드 API에서 ID가 ${kidId}인 아이 정보 불러오기`);
+    // const kidData = await getKid(kidId)
+    // form.name = kidData.kid || ''
+    // form.birthYear = kidData.birthYear || ''
+    // form.birthMonth = kidData.birthMonth || ''
+    // form.birthDay = kidData.birthDay || ''
+    // form.blood = kidData.bloodType || ''
+    // form.meds = kidData.medication || ''
+    // form.height = kidData.heightCm || ''
+    // form.weight = kidData.weightKg || ''
+    // form.history = kidData.medicalHistory || ''
+    // form.allergy = kidData.allergy || ''
+    // form.gender = kidData.gender || ''
     loading.value = false
   } catch (error) {
     console.error('아이 정보 불러오기 실패:', error)
@@ -199,8 +201,10 @@ async function save() {
 
   saving.value = true
   try {
-    await updateKid(kidId, form)
-    alert('아이 정보가 수정되었습니다!')
+    // TODO: 백엔드 API로 아이 정보 수정
+    console.log(`백엔드 API로 ID가 ${kidId}인 아이 정보 수정`, form);
+    // await updateKid(kidId, form)
+    alert('아이 정보가 수정되었습니다! (백엔드 연동 필요)')
     router.push('/MyKids')
   } catch (error) {
     console.error('아이 정보 수정 실패:', error)
@@ -216,8 +220,10 @@ async function deleteKid() {
   }
 
   try {
-    await removeKid(kidId)
-    alert('아이 정보가 삭제되었습니다.')
+    // TODO: 백엔드 API로 아이 정보 삭제
+    console.log(`백엔드 API로 ID가 ${kidId}인 아이 정보 삭제`);
+    // await removeKid(kidId)
+    alert('아이 정보가 삭제되었습니다. (백엔드 연동 필요)')
     router.push('/MyKids')
   } catch (error) {
     console.error('아이 정보 삭제 실패:', error)

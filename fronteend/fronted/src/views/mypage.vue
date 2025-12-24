@@ -88,8 +88,8 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { getUser, clearUser } from '../utils/userService.js'
-import { auth } from '../firebase/index'
-import { signOut } from 'firebase/auth'
+// import { auth } from '../firebase/index'
+// import { signOut } from 'firebase/auth'
 
 const router = useRouter()
 const user = ref(getUser())
@@ -118,8 +118,9 @@ function goTokid() {
 
 async function logout() {
   try {
-    // Firebase Auth에서 로그아웃
-    await signOut(auth)
+    // TODO: 백엔드 API 로그아웃 호출
+    // await signOut(auth)
+    
     // localStorage에서 사용자 정보 삭제
     clearUser()
     user.value = null

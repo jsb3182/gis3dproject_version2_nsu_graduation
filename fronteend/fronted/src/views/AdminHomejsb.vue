@@ -372,12 +372,12 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 // ✅ Firebase Auth
-import { onAuthStateChanged, signOut } from 'firebase/auth'
-import { auth } from '@/firebase'
+// import { onAuthStateChanged, signOut } from 'firebase/auth'
+// import { auth } from '@/firebase'
 
 // ✅ Firestore
-import { db } from '@/firebase'
-import { collection, getDocs, query, orderBy } from 'firebase/firestore'
+// import { db } from '@/firebase'
+// import { collection, getDocs, query, orderBy } from 'firebase/firestore'
 
 const router = useRouter()
 
@@ -388,13 +388,15 @@ const status = ref('로그인') // 기본값
 
 // 현재 로그인 상태를 Firebase Auth에서 감지
 onMounted(() => {
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      status.value = '로그아웃'
-    } else {
-      status.value = '로그인'
-    }
-  })
+  // onAuthStateChanged(auth, (user) => {
+  //   if (user) {
+  //     status.value = '로그아웃'
+  //   } else {
+  //     status.value = '로그인'
+  //   }
+  // })
+  // TODO: 백엔드 API로 로그인 상태 확인
+  status.value = '로그아웃'; // 임시로 로그아웃 상태로 설정
 })
 
 // 로그인 페이지로 이동
@@ -409,8 +411,10 @@ const goToUserEdit = (uid) => {
 // 로그아웃 처리
 const logout = async () => {
   try {
-    await signOut(auth)
+    // await signOut(auth)
+    console.log("TODO: 백엔드 API로 로그아웃 처리")
     alert('로그아웃 되었습니다.')
+    status.value = '로그인';
   } catch (err) {
     console.error('로그아웃 중 오류 발생:', err)
     alert('로그아웃 중 오류가 발생했습니다.')
@@ -456,85 +460,17 @@ function calcAge(birthYear) {
 
 async function loadUsersWithKids() {
   try {
-    // 1) users 전체 가져오기
-    const usersSnap = await getDocs(collection(db, 'users'))
-
-    // 2) kidinformation 전체 가져오기
-    const kidsSnap = await getDocs(collection(db, 'kidinformation'))
-
-    // 3) parentUid 기준으로 kids를 그룹화
-    const kidsByParent = {}
-    kidsSnap.forEach(docSnap => {
-      const data = docSnap.data()
-      const parentUid = data.parentUid
-      if (!parentUid) return
-
-      if (!kidsByParent[parentUid]) {
-        kidsByParent[parentUid] = []
-      }
-
-      kidsByParent[parentUid].push({
-        id: docSnap.id,
-        name: data.kid || '(이름 없음)',                  // ✅ 아이 이름
-        age: calcAge(data.birthYear),                    // ✅ 출생년→나이
-        gender: data.gender || '-',                      // "F" / "M"
-        heightCm: data.heightCm ?? null,
-        weightKg: data.weightKg ?? null,
-        bloodType: data.bloodType || '',
-        allergy: data.allergy || '',
-        medicalHistory: data.medicalHistory || '',
-        medication: data.medication || '',
-        raw: data
-      })
-    })
-
-    // 4) users에 kids 매핑해서 최종 배열 만들기
-    usersWithKids.value = usersSnap.docs.map(docSnap => {
-      const u = docSnap.data()
-      const uid = docSnap.id
-
-      return {
-        uid,
-        email: u.email || u.userEmail || '(이메일 없음)',
-        name: u.username || u.name || '(이름 없음)',
-        kids: kidsByParent[uid] || []
-      }
-    })
+    console.log("TODO: 백엔드 API로 사용자 및 자녀 정보 로드")
+    usersWithKids.value = []
   } catch (e) {
     console.error('users + kidinformation 조회 실패:', e)
   }
 }
-// query(collection(db, 'suggestions'), orderBy('createdAt', 'desc')): Firebase의 suggestions 컬렉션에서 데이터를 최신순으로 가져옵니다
-// snapshot.docs.map(): 각 문서를 JavaScript 객체로 변환합니다
-// data.createdAt.toDate(): Firebase Timestamp를 JavaScript Date 객체로 변환합니다
-// emergencyFeedbacks.value에 저장하면 자동으로 화면에 반영됩니다
+
 async function loadSuggestions() { //사용자가 작성한  건의사항 로딩하는 메소
   try {
-    // Firebase의 suggestions 컬렉션에서 데이터 가져오기
-    // 최신 순으로 정렬 (createdAt 내림차순)
-    const q = query(
-      collection(db, 'suggestions'),
-      orderBy('createdAt', 'desc')
-    )
-    const snapshot = await getDocs(q)
-
-    // 가져온 데이터를 emergencyFeedbacks 배열에 저장
-    emergencyFeedbacks.value = snapshot.docs.map(docSnap => {
-      const data = docSnap.data()
-      return {
-        id: docSnap.id, // 문서 ID
-        emergencyTitle: data.title || '(제목 없음)', // 건의사항 제목
-        content: data.content || '(내용 없음)', // 건의사항 내용
-        writer: data.fromEmail || '(작성자 없음)', // 작성자 이메일
-        createdAt: data.createdAt ? data.createdAt.toDate() : new Date(), // 작성일
-        status: data.status || '접수', // 상태
-        adminMemo: data.adminMemo || '', // 관리자 메모
-        targetRole: data.targetRole || '', // 대상 역할
-        fromUid: data.fromUid || '' // 작성자 UID
-      }
-    })
-
-    console.log('건의사항 로딩 완료:', emergencyFeedbacks.value.length + '건')
+    console.log("TODO: 백엔드 API로 건의사항 로드")
+    emergencyFeedbacks.value = []
   } catch (e) {
     console.error('suggestions 조회 실패:', e)
     alert('건의사항을 불러오는 중 오류가 발생했습니다.')

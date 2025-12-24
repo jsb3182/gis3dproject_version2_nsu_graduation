@@ -185,21 +185,21 @@ import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 // ✅ Firebase Auth
-import { onAuthStateChanged, signOut } from 'firebase/auth'
-import { auth } from '@/firebase'
+// import { onAuthStateChanged, signOut } from 'firebase/auth'
+// import { auth } from '@/firebase'
 
 // ✅ Firestore
-import { db } from '@/firebase'
-import {
-  collection,
-  getDocs,
-  doc,
-  orderBy,
-  deleteDoc,
-  query,
-  where,
-  writeBatch
-} from 'firebase/firestore'
+// import { db } from '@/firebase'
+// import {
+//   collection,
+//   getDocs,
+//   doc,
+//   orderBy,
+//   deleteDoc,
+//   query,
+//   where,
+//   writeBatch
+// } from 'firebase/firestore'
 
 const router = useRouter()
 const kidModalUser = ref(null)
@@ -220,12 +220,13 @@ const deleteEmergency = async (item) => {
   if (!ok) return
 
   try {
-    await deleteDoc(doc(db, 'emergencyData', item.id))
+    // await deleteDoc(doc(db, 'emergencyData', item.id))
+    console.log("TODO: 백엔드 API로 콘텐츠 삭제", item.id)
     alert('콘텐츠가 삭제되었습니다.')
     await loadEmergencyList()
   } catch (e) {
     console.error('응급 교육 콘텐츠 삭제 실패:', e)
-    alert('삭제 중 오류가 발생했습니다. Firestore rules를 확인해주세요.')
+    alert('삭제 중 오류가 발생했습니다. ')
   }
 }
 
@@ -243,27 +244,27 @@ const deleteUser = async (user) => {
   if (!ok) return
 
   try {
-    const batch = writeBatch(db)
+    // const batch = writeBatch(db)
 
-    const userRef = doc(db, 'users', user.uid)
-    batch.delete(userRef)
+    // const userRef = doc(db, 'users', user.uid)
+    // batch.delete(userRef)
 
-    const kidQ = query(
-      collection(db, 'kidinformation'),
-      where('parentUid', '==', user.uid)
-    )
-    const kidSnap = await getDocs(kidQ)
-    kidSnap.forEach(d => {
-      batch.delete(d.ref)
-    })
+    // const kidQ = query(
+    //   collection(db, 'kidinformation'),
+    //   where('parentUid', '==', user.uid)
+    // )
+    // const kidSnap = await getDocs(kidQ)
+    // kidSnap.forEach(d => {
+    //   batch.delete(d.ref)
+    // })
 
-    await batch.commit()
-
+    // await batch.commit()
+    console.log("TODO: 백엔드 API로 사용자와 자녀 정보 삭제", user.uid)
     alert('사용자와 자녀 정보가 삭제되었습니다.')
     await loadUsersWithKids()
   } catch (e) {
     console.error('사용자 삭제 실패:', e)
-    alert('삭제 중 오류가 발생했습니다. Firestore rules도 확인해주세요.')
+    alert('삭제 중 오류가 발생했습니다. ')
   }
 }
 
@@ -298,81 +299,16 @@ function calcAge(birthYear) {
 
 async function loadUsersWithKids() {
   try {
-    const usersSnap = await getDocs(collection(db, 'users'))
-    const kidsSnap = await getDocs(collection(db, 'kidinformation'))
-
-    const kidsByParent = {}
-    kidsSnap.forEach(docSnap => {
-      const data = docSnap.data()
-      const parentUid = data.parentUid
-      if (!parentUid) return
-
-      if (!kidsByParent[parentUid]) {
-        kidsByParent[parentUid] = []
-      }
-
-      kidsByParent[parentUid].push({
-        id: docSnap.id,
-        name: data.kid || '(이름 없음)',
-        age: calcAge(data.birthYear),
-        gender: data.gender || '-',
-        heightCm: data.heightCm ?? null,
-        weightKg: data.weightKg ?? null,
-        bloodType: data.bloodType || '',
-        allergy: data.allergy || '',
-        medicalHistory: data.medicalHistory || '',
-        medication: data.medication || '',
-        raw: data
-      })
-    })
-
-    usersWithKids.value = usersSnap.docs.map(docSnap => {
-      const u = docSnap.data()
-      const uid = docSnap.id
-
-      return {
-        uid,
-        email: u.email || u.userEmail || '(이메일 없음)',
-        username: u.username || '',
-        name: u.name || '(이름 없음)',
-        phone: u.phone || '',
-        agreeTerms: u.agreeTerms ?? false,
-        agreeMarketing: u.agreeMarketing ?? false,
-        createdAt: u.createdAt ? new Date(u.createdAt) : null,
-        kids: kidsByParent[uid] || []
-      }
-    })
+    console.log("TODO: 백엔드 API로 사용자 및 자녀 정보 로드")
+    usersWithKids.value = [];
   } catch (e) {
     console.error('users + kidinformation 조회 실패:', e)
   }
 }
 async function loadSuggestions() { //사용자가 작성한  건의사항 로딩하는 메소
   try {
-    // Firebase의 suggestions 컬렉션에서 데이터 가져오기
-    // 최신 순으로 정렬 (createdAt 내림차순)
-    const q = query(
-      collection(db, 'suggestions'),
-      orderBy('createdAt', 'desc')
-    )
-    const snapshot = await getDocs(q)
-
-    // 가져온 데이터를 emergencyFeedbacks 배열에 저장
-    emergencyFeedbacks.value = snapshot.docs.map(docSnap => {
-      const data = docSnap.data()
-      return {
-        id: docSnap.id, // 문서 ID
-        emergencyTitle: data.title || '(제목 없음)', // 건의사항 제목
-        content: data.content || '(내용 없음)', // 건의사항 내용
-        writer: data.fromEmail || '(작성자 없음)', // 작성자 이메일
-        createdAt: data.createdAt ? data.createdAt.toDate() : new Date(), // 작성일
-        status: data.status || '접수', // 상태
-        adminMemo: data.adminMemo || '', // 관리자 메모
-        targetRole: data.targetRole || '', // 대상 역할
-        fromUid: data.fromUid || '' // 작성자 UID
-      }
-    })
-
-    console.log('건의사항 로딩 완료:', emergencyFeedbacks.value.length + '건')
+    console.log("TODO: 백엔드 API로 건의사항 로드")
+    emergencyFeedbacks.value = [];
   } catch (e) {
     console.error('suggestions 조회 실패:', e)
     alert('건의사항을 불러오는 중 오류가 발생했습니다.')
@@ -385,26 +321,8 @@ const emergencyList = ref([])
 
 async function loadEmergencyList() {
   try {
-    const q = query(
-      collection(db, 'emergencyData'),
-      orderBy('createdAt', 'desc')
-    )
-    const snap = await getDocs(q)
-
-    emergencyList.value = snap.docs.map(d => {
-      const data = d.data()
-      return {
-        id: d.id,
-        title: data.title || '(제목 없음)',
-        createdAt: data.createdAt ? data.createdAt.toDate() : null,
-        viewCount: data.viewCount ?? 0,
-        hashtags: data.hashtags || [],
-        thumbnailUrl: data.thumbnailUrl || '',
-        youtubeId: data.youtubeId || '',
-        youtubeUrl: data.youtubeUrl || '',
-        raw: data
-      }
-    })
+    console.log("TODO: 백엔드 API로 응급처치 목록 로드")
+    emergencyList.value = [];
   } catch (e) {
     console.error('emergencyData 로딩 실패:', e)
   }
@@ -415,39 +333,9 @@ async function loadEmergencyList() {
 // ----------------------
 const feedbackTab = ref('app')
 
-const appFeedbacks = ref([
-  {
-    id: 'f1',
-    title: '야간 모드가 있으면 좋겠습니다.',
-    writer: 'user01@naver.com',
-    createdAt: new Date(),
-    status: '접수'
-  },
-  {
-    id: 'f2',
-    title: '메인 화면에 자주 쓰는 메뉴를 고정하고 싶어요.',
-    writer: 'user02@gmail.com',
-    createdAt: new Date(),
-    status: '처리완료'
-  }
-])
+const appFeedbacks = ref([])
 
-const emergencyFeedbacks = ref([
-  {
-    id: 'ef1',
-    emergencyTitle: '고열 시 응급처치',
-    content: '해열제 종류에 대한 설명도 추가되면 좋겠습니다.',
-    writer: 'parent03@example.com',
-    createdAt: new Date()
-  },
-  {
-    id: 'ef2',
-    emergencyTitle: '기도 막힘 대처법',
-    content: '동영상 속도가 빨라서, 좀 더 천천히 설명된 버전이 있으면 좋겠어요.',
-    writer: 'parent04@example.com',
-    createdAt: new Date()
-  }
-])
+const emergencyFeedbacks = ref([])
 
 // ----------------------
 // 자동화 실행 + 로그 (FastAPI SSE)

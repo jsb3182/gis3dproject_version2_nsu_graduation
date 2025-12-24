@@ -261,8 +261,8 @@
 // 그대로 사용 (변경 없음)
 import { reactive, computed, ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { db } from '@/firebase'
-import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore'
+// import { db } from '@/firebase'
+// import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore'
 
 const router = useRouter()
 const route = useRoute()
@@ -283,16 +283,26 @@ const isSubmitting = ref(false)
 
 onMounted(async () => {
   try {
-    const refDoc = doc(db, 'emergencyData', docId)
-    const snap = await getDoc(refDoc)
+    // const refDoc = doc(db, 'emergencyData', docId)
+    // const snap = await getDoc(refDoc)
 
-    if (!snap.exists()) {
-      alert('해당 문서를 찾을 수 없습니다.')
-      router.back()
-      return
-    }
+    // if (!snap.exists()) {
+    //   alert('해당 문서를 찾을 수 없습니다.')
+    //   router.back()
+    //   return
+    // }
 
-    const data = snap.data()
+    // const data = snap.data()
+    console.log("TODO: 백엔드 API에서 문서 불러오기", docId);
+    const data = { // Mock Data
+      title: '임시 제목',
+      youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      hashtags: ['임시태그'],
+      symptomList: ['임시증상'],
+      methodList: ['임시처치'],
+      reasonList: ['임시원인'],
+      warning: '임시경고'
+    };
 
     form.title = data.title || ''
     form.url = data.youtubeUrl || data.url || ''
@@ -350,20 +360,20 @@ async function handleSubmit() {
 
     const thumbnailUrl = getYoutubeThumbnail(form.url)
 
-    const refDoc = doc(db, 'emergencyData', docId)
-
-    await updateDoc(refDoc, {
-      title: form.title,
-      youtubeUrl: form.url,
-      youtubeId,
-      thumbnailUrl,
-      hashtags: form.hashtags,
-      symptomList: form.symptomList,
-      methodList: form.methodList,
-      reasonList: form.reasonList,
-      warning: form.warning,
-      updatedAt: serverTimestamp()
-    })
+    // const refDoc = doc(db, 'emergencyData', docId)
+    console.log("TODO: 백엔드 API로 문서 수정", docId, form);
+    // await updateDoc(refDoc, {
+    //   title: form.title,
+    //   youtubeUrl: form.url,
+    //   youtubeId,
+    //   thumbnailUrl,
+    //   hashtags: form.hashtags,
+    //   symptomList: form.symptomList,
+    //   methodList: form.methodList,
+    //   reasonList: form.reasonList,
+    //   warning: form.warning,
+    //   updatedAt: serverTimestamp()
+    // })
 
     alert('응급 교육 콘텐츠가 수정되었습니다.')
     router.push('/AdminEmergency')

@@ -132,8 +132,8 @@ import { ref, onMounted } from 'vue'
 // 페이지 이동을 위한 라우터 가져오기
 import { useRouter, useRoute } from 'vue-router'
 // Firebase Firestore 함수 가져오기
-import { db } from '@/firebase'
-import { doc, getDoc } from 'firebase/firestore'
+// import { db } from '@/firebase'
+// import { doc, getDoc } from 'firebase/firestore'
 
 // 라우터 인스턴스 생성
 const router = useRouter()
@@ -177,39 +177,24 @@ async function loadSuggestion() {
     // URL에서 건의사항 ID 가져오기
     const suggestionId = route.params.id
     
+    console.log(`TODO: 백엔드 API에서 ID가 ${suggestionId}인 건의사항 불러오기`)
+
     if (!suggestionId) {
       console.error('건의사항 ID가 없습니다.')
       suggestion.value = null
       return
     }
 
-    // Firestore에서 해당 ID의 문서 가져오기
-    const docRef = doc(db, 'suggestions', suggestionId)
-    const docSnap = await getDoc(docRef)
+    suggestion.value = {
+      id: suggestionId,
+      title: '임시 건의사항 제목',
+      content: '임시 건의사항 내용입니다.',
+      fromEmail: 'test@example.com',
+      status: '접수',
+      adminMemo: '관리자 메모 없음',
+      createdAt: new Date(),
+    };
 
-    // 문서가 존재하는지 확인
-    if (docSnap.exists()) {
-      const data = docSnap.data()
-      
-      // suggestion 변수에 데이터 저장
-      suggestion.value = {
-        id: docSnap.id,
-        title: data.title || '(제목 없음)',
-        content: data.content || '(내용 없음)',
-        fromEmail: data.fromEmail || '(이메일 없음)',
-        fromUid: data.fromUid || '',
-        status: data.status || '접수',
-        targetRole: data.targetRole || '',
-        adminMemo: data.adminMemo || '',
-        createdAt: data.createdAt ? data.createdAt.toDate() : new Date(),
-        updatedAt: data.updatedAt ? data.updatedAt.toDate() : new Date()
-      }
-      
-      console.log('건의사항 로딩 완료:', suggestion.value)
-    } else {
-      console.error('건의사항을 찾을 수 없습니다.')
-      suggestion.value = null
-    }
   } catch (error) {
     console.error('건의사항 로딩 중 오류:', error)
     alert('건의사항을 불러오는 중 오류가 발생했습니다.')

@@ -259,7 +259,7 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { addEmergencyData } from '../firebase/emergency.js'
+// import { addEmergencyData } from '../firebase/emergency.js'
 
 const router = useRouter()
 
@@ -336,8 +336,9 @@ async function handleSubmit() {
       warning: form.warning.trim()
     }
     
-    // 7. Firebase에 저장
-    await addEmergencyData(data)
+    // 7. TODO: 백엔드에 저장
+    console.log('백엔드에 데이터 저장:', data)
+    // await addEmergencyData(data)
     alert('응급처치 정보가 저장되었습니다!')
     router.push('/emergency')
     

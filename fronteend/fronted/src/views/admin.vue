@@ -86,8 +86,8 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { db } from '../firebase/index.js'
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, orderBy, query } from 'firebase/firestore'
+// import { db } from '../firebase/index.js'
+// import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, orderBy, query } from 'firebase/firestore'
 
 const items = ref([])
 const newData = ref({
@@ -102,17 +102,23 @@ const editingId = ref(null)
 const editData = ref({})
 
 async function loadData() {
-  const q = query(collection(db, 'emergencyData'), orderBy('date', 'desc'))
-  const snapshot = await getDocs(q)
-  items.value = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+  // const q = query(collection(db, 'emergencyData'), orderBy('date', 'desc'))
+  // const snapshot = await getDocs(q)
+  // items.value = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+  console.log("TODO: 백엔드 API로 데이터 로드")
+  items.value = [
+    { id: '1', title: '임시 제목 1', date: '2025.01.01', videoUrl: 'http://example.com', description: '임시 설명 1', views: 10 },
+    { id: '2', title: '임시 제목 2', date: '2025.01.02', videoUrl: 'http://example.com', description: '임시 설명 2', views: 20 },
+  ]
 }
 
 async function addData() {
   try {
-    await addDoc(collection(db, 'emergencyData'), {
-      ...newData.value,
-      createdAt: new Date().toISOString()
-    })
+    // await addDoc(collection(db, 'emergencyData'), {
+    //   ...newData.value,
+    //   createdAt: new Date().toISOString()
+    // })
+    console.log("TODO: 백엔드 API로 데이터 추가", newData.value)
     alert('추가되었습니다.')
     newData.value = { title: '', date: '', videoUrl: '', description: '', views: 0 }
     loadData()
@@ -129,7 +135,8 @@ function startEdit(item) {
 
 async function saveEdit(id) {
   try {
-    await updateDoc(doc(db, 'emergencyData', id), editData.value)
+    // await updateDoc(doc(db, 'emergencyData', id), editData.value)
+    console.log("TODO: 백엔드 API로 데이터 수정", id, editData.value)
     alert('수정되었습니다.')
     editingId.value = null
     loadData()
@@ -148,7 +155,8 @@ async function deleteData(id) {
   if (!confirm('정말 삭제하시겠습니까?')) return
   
   try {
-    await deleteDoc(doc(db, 'emergencyData', id))
+    // await deleteDoc(doc(db, 'emergencyData', id))
+    console.log("TODO: 백엔드 API로 데이터 삭제", id)
     alert('삭제되었습니다.')
     loadData()
   } catch (error) {

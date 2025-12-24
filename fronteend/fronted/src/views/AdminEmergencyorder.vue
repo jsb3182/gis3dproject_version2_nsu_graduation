@@ -149,7 +149,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getEmergencyData, incrementViews } from '../firebase/emergency.js'
+// import { getEmergencyData, incrementViews } from '../firebase/emergency.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -162,7 +162,21 @@ const id = computed(() => route.params.id)
 
 onMounted(async () => {
   try {
-    item.value = await getEmergencyData(id.value)
+    // item.value = await getEmergencyData(id.value)
+    console.log(`TODO: 백엔드 API에서 ID가 ${id.value}인 응급처치 데이터 불러오기`)
+    item.value = {
+      id: id.value,
+      title: "임시 제목",
+      createdAt: new Date(),
+      viewCount: 123,
+      thumbnailUrl: "https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg",
+      youtubeUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      hashtags: ["임시", "태그"],
+      symptomList: ["증상1", "증상2"],
+      methodList: ["응급처치1", "응급처치2"],
+      reasonList: ["원인1", "원인2"],
+      warning: "주의사항입니다."
+    };
   } catch (error) {
     console.error('데이터 로드 실패:', error)
   } finally {

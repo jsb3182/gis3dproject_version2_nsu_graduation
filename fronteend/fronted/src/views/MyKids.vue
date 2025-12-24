@@ -94,7 +94,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from "vue"
 import { useRouter } from 'vue-router'
-import { watchMyKids } from '@/firebase/kid.js'
+// import { watchMyKids } from '@/firebase/kid.js'
 import kidboyImg from '@/assets/kidboy.png'
 import kidgirlImg from '@/assets/kidgirl.png'
 import kidDefaultImg from '@/assets/kid1.jpg'
@@ -118,24 +118,11 @@ const scrollBoxStyle = computed(() => ({
 
 onMounted(async () => {
   try {
-    // Firestore에서 실시간으로 내 아이 목록 구독
-    unsubscribe = await watchMyKids((rows) => {
-      kids.value = rows.map(kid => ({
-        id: kid.id,
-        label: kid.kid || "아이",  // kid 필드 사용
-        name: kid.kid || "",  // kid 필드 사용
-        birthYear: kid.birthYear || "",
-        blood: kid.bloodType || "",  // bloodType 필드 사용
-        trait: kid.medicalHistory || "",  // medicalHistory 필드 사용
-        meds: kid.medication || "",  // medication 필드 사용
-        height: kid.heightCm || 0,  // heightCm 필드 사용
-        weight: kid.weightKg || 0,  // weightKg 필드 사용
-        allergy: kid.allergy || "",
-        gender: kid.gender || "",
-        open: false
-      }))
-      loading.value = false
-    })
+    // TODO: 백엔드 API에서 아이 목록을 불러오도록 수정
+    console.log('백엔드 API에서 아이 목록을 불러오도록 수정');
+    // 임시로 로딩 상태만 false로 변경
+    loading.value = false;
+    
   } catch (error) {
     console.error('아이 목록 불러오기 실패:', error)
     if (error.message === '로그인이 필요합니다.') {
@@ -147,7 +134,7 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
-  if (unsubscribe) unsubscribe()
+  // if (unsubscribe) unsubscribe() // Firebase 구독 해제
 })
 
 function toggle(i) {

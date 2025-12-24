@@ -129,9 +129,9 @@
 
 <script setup>
 import { reactive, computed, ref } from 'vue'
-import { auth, db } from '../firebase/index.js'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { doc, setDoc, collection } from 'firebase/firestore'
+// import { auth, db } from '../firebase/index.js'
+// import { createUserWithEmailAndPassword } from 'firebase/auth'
+// import { doc, setDoc, collection } from 'firebase/firestore'
 import { useRouter } from 'vue-router'
 import { setUser } from '../utils/userService.js'
 
@@ -151,7 +151,7 @@ const form = reactive({
 
 const tried = ref(false)
 const isLoading = ref(false)
-const USER_COLLECTION = collection(db, 'users')
+// const USER_COLLECTION = collection(db, 'users')
 
 const passwordsMatch = computed(() => form.userPw && form.userPw === form.userPwCheck)
 
@@ -175,53 +175,25 @@ async function onSubmit() {
 
   isLoading.value = true
   try {
-    // 1️⃣ Firebase Auth에 사용자 생성 (이때 자동 로그인 상태가 됨)
-    const credential = await createUserWithEmailAndPassword(auth, form.userEmail, form.userPw)
-    const user = credential.user
-
-    // 2️⃣ Firestore에 정보 저장 (camelCase로 통일)
-    const userDoc = doc(USER_COLLECTION, user.uid)
-    await setDoc(userDoc, {
-      uid: user.uid,
-      username: form.userId,
-      name: form.userName,
-      phone: form.userPhoneNum,
-      email: form.userEmail,
-      agreeTerms: form.agreeTerms,
-      agreeMarketing: form.agreeMarketing,
-      createdAt: new Date().toISOString(),
-    })
-
-    // 3️⃣ 로컬스토리지에 사용자 정보 저장 -> 새로고침해도 유지, 헤더에서 읽도록 사용
-    const localUser = {
-      uid: user.uid,
+    // TODO: 백엔드 API로 회원가입 처리
+    console.log('백엔드 API 호출로 회원가입', form);
+    
+    // 임시 로직: 사용자 정보를 로컬 스토리지에 저장하고 홈으로 이동
+    const tempUser = {
+      uid: `temp_${Date.now()}`,
       name: form.userName,
       username: form.userId,
       email: form.userEmail,
       phone: form.userPhoneNum
-    }
-    setUser(localUser)
-
-    // 4️⃣ 홈으로 이동 (자동 로그인 상태 유지)
-    alert('회원가입이 완료되었습니다!')
+    };
+    setUser(tempUser);
+    
+    alert('회원가입이 완료되었습니다! (백엔드 연동 필요)')
     router.push('/')
 
   } catch (err) {
     console.error('회원가입 오류:', err)
-    switch (err.code) {
-      case 'auth/invalid-email':
-        alert('이메일을 바르게 입력해주세요.')
-        break
-      case 'auth/weak-password':
-        alert('비밀번호가 너무 쉬워요. 8자 이상으로 설정해주세요.')
-        break
-      case 'auth/email-already-in-use':
-        alert('이미 등록된 이메일입니다.')
-        break
-      default:
-        alert('회원가입에 실패했습니다. 다시 시도해주세요.')
-        break
-    }
+    alert('회원가입에 실패했습니다. 다시 시도해주세요.')
   } finally {
     isLoading.value = false
   }

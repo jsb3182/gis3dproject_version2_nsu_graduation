@@ -136,7 +136,7 @@
 import { ref, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+// import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const router = useRouter();
 const input = ref("");
@@ -151,6 +151,13 @@ const isListening = ref(false);
 const synth = window.speechSynthesis;
 const userLocation = ref({ lat: null, lon: null });
 const showPopup = ref(false);
+
+// 임시 사용자 정보
+const tempUser = {
+  uid: "temp-user-uid-12345",
+  email: "temp.user@example.com"
+};
+
 
 // ✅ 팝업
 const cancelPopup = () => { showPopup.value = false; router.push("/"); };
@@ -169,8 +176,7 @@ const selectKid = (kid) => {
 
 // ✅ 아이 상세 정보 로드
 const loadKidDetail = async (kid) => {
-  const auth = getAuth();
-  const user = auth.currentUser;
+  const user = tempUser; // 임시 사용자
   const res = await axios.get("https://child119-251868777139.asia-northeast3.run.app/api/kids/detail", {
     params: { parentUid: user.uid, kidName: kid.kid },
   });
@@ -204,8 +210,7 @@ const sendMessage = async () => {
   input.value = "";
 
   if (socket && socket.readyState === WebSocket.OPEN) {
-    const auth = getAuth();
-    const user = auth.currentUser;
+    const user = tempUser; // 임시 사용자
     
     const payload = {
       message: text,
@@ -240,10 +245,8 @@ const getUserLocation = () => {
 // ✅ onMounted
 onMounted(async () => {
   showPopup.value = true;
-  const auth = getAuth();
-  const user = await new Promise((resolve) => {
-    const stop = onAuthStateChanged(auth, (u) => { stop(); resolve(u); });
-  });
+  
+  const user = tempUser; // 임시 사용자 사용
 
   initWebSocket();
 

@@ -63,11 +63,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { db, auth } from '@/firebase'
-import { collection, getDocs, orderBy, query, deleteDoc, doc, getDoc } from 'firebase/firestore'
-import { onAuthStateChanged } from 'firebase/auth'// ←
-import {incrementViews} from '@/firebase/emergency.js'
-
 // --------------------------------------------
 // ✅ 기본 설정
 // --------------------------------------------

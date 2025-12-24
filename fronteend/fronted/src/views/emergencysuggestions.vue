@@ -103,7 +103,7 @@ import { reactive } from 'vue'
 // 페이지 이동을 위한 라우터 가져오기
 import { useRouter } from 'vue-router'
 // Firebase 건의사항 저장 함수 가져오기
-import { addSuggestion } from '@/firebase/suggetions'
+// import { addSuggestion } from '@/firebase/suggetions'
 
 // 라우터 인스턴스 생성
 const router = useRouter()
@@ -128,15 +128,9 @@ function goBack() {
  */
 async function handleSubmit() {
   try {
-    // addSuggestion 함수를 호출하여 Firebase에 데이터 저장
-    await addSuggestion({
-      title: form.title, // 제목
-      content: form.content, // 내용
-      adminMemo: '관리자가 남기는 메모지', // 관리자 메모 (기본값)
-      status: '관리자가 읽은 상태', // 상태 (기본값)
-      targetRole: '향상 admin 고정' // 대상 역할 (기본값)
-    })
-
+    // TODO: 백엔드 API로 건의사항 저장
+    console.log('백엔드 API로 건의사항 저장', form)
+    
     // 저장 성공 시 알림 표시
     alert('건의사항이 성공적으로 제출되었습니다.')
     

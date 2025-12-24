@@ -119,7 +119,7 @@
 <script setup>
 import { reactive, ref, computed } from "vue"
 import { useRouter } from 'vue-router'
-import { addKid } from '@/firebase/kid.js'
+// import { addKid } from '@/firebase/kid.js' // Firebase a ddKid
 import kidboyImg from '@/assets/kidboy.png'
 import kidgirlImg from '@/assets/kidgirl.png'
 import kidDefaultImg from '@/assets/kid1.jpg'
@@ -173,9 +173,13 @@ async function onSubmit() {
 
   isLoading.value = true
   try {
-    await addKid(form)
-    alert('아이 정보가 추가되었습니다!')
+    // TODO: 백엔드 API 호출로 아이 정보 추가
+    console.log('백엔드 API 호출로 아이 정보 추가', form)
+    alert('아이 정보가 추가되었습니다! (백엔드 연동 필요)')
     router.push('/MyKids')
+    // await addKid(form)
+    // alert('아이 정보가 추가되었습니다!')
+    // router.push('/MyKids')
   } catch (error) {
     console.error('아이 정보 추가 실패:', error)
     if (error.message === '로그인이 필요합니다.') {

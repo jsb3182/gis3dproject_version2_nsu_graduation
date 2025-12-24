@@ -55,8 +55,8 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { db } from '../firebase/index.js'
-import { doc, getDoc, updateDoc, increment } from 'firebase/firestore'
+// import { db } from '../firebase/index.js'
+// import { doc, getDoc, updateDoc, increment } from 'firebase/firestore'
 
 const route = useRoute()
 const router = useRouter()
@@ -68,17 +68,17 @@ const id = computed(() => route.params.id)
 
 onMounted(async () => {
   try {
-    const docRef = doc(db, 'emergencyData', id.value)
-    const docSnap = await getDoc(docRef)
+    // TODO: 백엔드 API에서 데이터 불러오기 및 조회수 증가 처리
+    console.log(`백엔드 API에서 ID가 ${id.value}인 데이터 불러오기`)
+    item.value = {
+      id: id.value,
+      title: '임시 데이터 제목',
+      date: new Date().toLocaleDateString(),
+      views: 1,
+      videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      description: '이것은 백엔드 연동 전의 임시 데이터입니다.'
+    };
     
-    if (docSnap.exists()) {
-      item.value = { id: docSnap.id, ...docSnap.data() }
-      
-      // 조회수 증가
-      await updateDoc(docRef, {
-        views: increment(1)
-      })
-    }
   } catch (error) {
     console.error('데이터 로드 실패:', error)
   } finally {

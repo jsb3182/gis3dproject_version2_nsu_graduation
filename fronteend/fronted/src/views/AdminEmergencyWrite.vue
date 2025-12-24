@@ -260,8 +260,8 @@
 <script setup>
 import { reactive, computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { db } from '@/firebase'
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
+// import { db } from '@/firebase'
+// import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 
 const router = useRouter()
 
@@ -319,11 +319,12 @@ async function handleSubmit() {
       reasonList: form.reasonList,
       warning: form.warning,
       viewCount: 0,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
+      // createdAt: serverTimestamp(),
+      // updatedAt: serverTimestamp(),
     }
 
-    await addDoc(collection(db, 'emergencyData'), payload)
+    // await addDoc(collection(db, 'emergencyData'), payload)
+    console.log("TODO: 백엔드 API로 콘텐츠 등록", payload)
 
     alert('응급 교육 콘텐츠가 등록되었습니다.')
     router.push('/AdminEmergency')

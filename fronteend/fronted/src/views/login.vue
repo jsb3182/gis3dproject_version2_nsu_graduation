@@ -61,9 +61,9 @@
 <script setup>
 import { reactive, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { auth, db } from '@/firebase/index'
-import { signInWithEmailAndPassword } from 'firebase/auth'
-import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore'
+// import { auth, db } from '@/firebase/index'
+// import { signInWithEmailAndPassword } from 'firebase/auth'
+// import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore'
 import { setUser } from '@/utils/userService.js'
 
 const router = useRouter()
@@ -87,116 +87,34 @@ async function onSubmit() {
     return
   }
 
+  isLoading.value = true;
   try {
-    isLoading.value = true
+    // TODO: 백엔드 API로 로그인 처리
+    console.log("백엔드 로그인 시도:", form);
 
-    // 1단계: Firestore에서 username으로 이메일 찾기
-    const usersCollection = collection(db, 'users')
-    const q = query(usersCollection, where('username', '==', form.username))
-    const querySnapshot = await getDocs(q)
+    // 임시 로직: 사용자 정보를 로컬 스토리지에 저장하고 홈으로 이동
+    const isAdmin = form.username.includes('admin');
+    const tempUser = {
+      uid: `temp_${Date.now()}`,
+      name: isAdmin ? '관리자' : '일반사용자',
+      username: form.username,
+      email: `${form.username}@example.com`,
+      phone: '010-1234-5678',
+      role: isAdmin ? 'admin' : 'user'
+    };
+    setUser(tempUser);
 
-    if (querySnapshot.empty) {
-      alert('등록되지 않은 아이디입니다.')
-      isLoading.value = false
-      return
+    alert('로그인에 성공했습니다! (백엔드 연동 필요)');
+
+    if (isAdmin) {
+      router.push('/AdminHome');
+    } else {
+      router.push('/');
     }
-
-    // 첫 번째 일치하는 사용자의 이메일 가져오기
-    const userDocData = querySnapshot.docs[0].data()
-    const userEmail = userDocData.email
-
-    if (!userEmail) {
-      alert('사용자 정보를 찾을 수 없습니다.')
-      isLoading.value = false
-      return
-    }
-
-    // 2단계: 찾은 이메일로 Firebase Auth 로그인
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      userEmail,
-      form.password
-    )
-
-    const user = userCredential.user
-
-   // 3단계: Firestore에서 사용자 정보 가져오기
-const userDocRef = doc(db, 'users', user.uid)
-const userDoc = await getDoc(userDocRef)
-
-let userData = {
-  uid: user.uid,
-  name: user.displayName || '사용자',
-  username: form.username,
-  email: userEmail,
-  phone: ''
-}
-
-let isAdmin = false   // ✅ 관리자 여부 플래그
-
-if (userDoc.exists()) {
-  const firestoreData = userDoc.data()
-  userData = {
-    uid: firestoreData.uid || user.uid,
-    name: firestoreData.name || user.displayName || '사용자',
-    username: firestoreData.username || form.username,
-    email: userEmail,
-    phone: firestoreData.phone || ''
-  }
-  console.log('사용자 정보:', firestoreData)
-
-  // ✅ Firestore에 저장된 username 기준으로 admin 여부 판별
-  if (firestoreData.username && firestoreData.username.includes('admin')) {
-    isAdmin = true
-  }
-} else {
-  // 혹시 users 문서가 없을 때: 입력한 아이디로라도 체크
-  if (form.username.includes('admin')) {
-    isAdmin = true
-  }
-}
-
-// 4단계: localStorage에 사용자 정보 저장
-setUser({
-  ...userData,
-  role: isAdmin ? 'admin' : 'user'   // ✅ 선택: 역할 같이 저장해두면 나중에 편함
-})
-
-// 로그인 성공
-alert('로그인에 성공했습니다!')
-
-// ✅ 메인 페이지 이동: admin이면 관리자 홈, 아니면 일반 홈
-if (isAdmin) {
-  router.push('/AdminHome')        // <-- AdminHome.vue에 연결된 경로로 수정
-} else {
-  router.push('/')             // 기존 홈
-}
-
 
   } catch (error) {
     console.error('로그인 오류:', error)
-
-    // Firebase Auth 에러 처리
-    switch (error.code) {
-      case 'auth/invalid-email':
-        alert('올바른 이메일 형식을 입력해주세요.')
-        break
-      case 'auth/user-not-found':
-        alert('등록되지 않은 아이디입니다.')
-        break
-      case 'auth/wrong-password':
-        alert('비밀번호가 일치하지 않습니다.')
-        break
-      case 'auth/invalid-credential':
-        alert('아이디 또는 비밀번호를 다시 확인해주세요.')
-        break
-      case 'auth/too-many-requests':
-        alert('로그인 시도가 너무 많습니다. 잠시 후 다시 시도해주세요.')
-        break
-      default:
-        alert('아이디, 비밀번호를 다시 확인해주세요.')
-        break
-    }
+    alert('아이디, 비밀번호를 다시 확인해주세요.')
   } finally {
     isLoading.value = false
   }

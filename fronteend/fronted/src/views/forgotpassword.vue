@@ -60,9 +60,9 @@
 <script setup>
 import { reactive, computed, ref } from "vue"
 import { useRouter } from "vue-router"
-import { db, auth } from "@/firebase/index"
-import { collection, query, where, getDocs } from "firebase/firestore"
-import { sendPasswordResetEmail } from "firebase/auth"
+// import { db, auth } from "@/firebase/index"
+// import { collection, query, where, getDocs } from "firebase/firestore"
+// import { sendPasswordResetEmail } from "firebase/auth"
 
 const router = useRouter()
 
@@ -89,60 +89,12 @@ async function onSubmit() {
   isLoading.value = true
 
   try {
-    // Firebase Firestore에서 이름, 연락처, 아이디(username)로 사용자 검색
-    const userCollection = collection(db, 'users')
+    // TODO: 백엔드 API로 비밀번호 재설정 요청
+    console.log("백엔드 API로 비밀번호 재설정 요청:", form)
 
-    // 연락처 정규화 (하이픈 제거)
-    const normalizedPhone = form.phone.replace(/-/g, '')
+    alert(`비밀번호 재설정 이메일이 ${form.username}(으)로 전송되었습니다. (백엔드 연동 필요)\n\n이메일을 확인하여 비밀번호를 재설정해주세요.`)
 
-    // username으로 쿼리
-    const q = query(
-      userCollection,
-      where('username', '==', form.username)
-    )
-
-    const querySnapshot = await getDocs(q)
-
-    // 일치하는 사용자 찾기
-    let foundUser = null
-
-    querySnapshot.forEach((doc) => {
-      const userData = doc.data()
-      // 이름과 연락처가 모두 일치하는지 확인
-      const dbPhone = userData.phone.replace(/-/g, '')
-      if (userData.name === form.name && dbPhone === normalizedPhone) {
-        foundUser = userData
-      }
-    })
-
-    if (foundUser) {
-      // 사용자를 찾았을 때
-      // Firebase Auth로 비밀번호 재설정 이메일 전송
-      // foundUser의 이메일이 Firebase Auth 이메일과 동일하다고 가정
-      const userEmail = foundUser.username // username이 이메일인 경우
-
-      try {
-        await sendPasswordResetEmail(auth, userEmail)
-
-        // 성공 메시지
-        alert(`비밀번호 재설정 이메일이 ${userEmail}(으)로 전송되었습니다.\n\n이메일을 확인하여 비밀번호를 재설정해주세요.`)
-
-        // 로그인 페이지로 이동
-        router.push('/login')
-      } catch (emailError) {
-        console.error('이메일 전송 오류:', emailError)
-
-        if (emailError.code === 'auth/user-not-found') {
-          alert('해당 이메일로 등록된 계정이 없습니다.')
-        } else if (emailError.code === 'auth/invalid-email') {
-          alert('유효하지 않은 이메일 주소입니다.')
-        } else {
-          alert('비밀번호 재설정 이메일 전송에 실패했습니다.\n다시 시도해주세요.')
-        }
-      }
-    } else {
-      alert('일치하는 회원 정보를 찾을 수 없습니다.\n입력한 정보를 다시 확인해주세요.')
-    }
+    router.push('/login')
 
   } catch (error) {
     console.error('비밀번호 찾기 중 오류 발생:', error)
