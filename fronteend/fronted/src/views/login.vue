@@ -1,7 +1,8 @@
 <template>
-  <div class="min-vh-100 d-flex align-items-start justify-content-center bg-body-tertiary py-4">
+  <div class="min-vh-100 d-flex align-items-start justify-content-center bg-body-tertiary py-4"
+  style="">
     <!-- 고정 폭 컨테이너 (반응형 X) -->
-    <div class="container" style="max-width: 420px;">
+     <div style="width: 100%; max-width: 420px;">
       <!-- Brand: 전체 이미지를 쓰는 경우 -->
       <div class="text-center mb-3">
         <!-- 전체 로고(아이콘+텍스트)가 하나의 이미지인 경우 -->
@@ -61,9 +62,6 @@
 <script setup>
 import { reactive, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-// import { auth, db } from '@/firebase/index'
-// import { signInWithEmailAndPassword } from 'firebase/auth'
-// import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore'
 import { setUser } from '@/utils/userService.js'
 
 const router = useRouter()

@@ -184,16 +184,8 @@
               <strong>건물용도:</strong> {{ item.buildingType }}
             </p>
 
-            <p class="mb-1 text-muted small" v-if="item.capacity">
-              <strong>수용인원:</strong> {{ item.capacity }}명
-            </p>
-
             <p class="mb-1 text-muted small" v-if="item.buildingArea">
               <strong>건축면적:</strong> {{ item.buildingArea }}㎡
-            </p>
-
-            <p class="mb-1 text-muted small" v-if="item.totalArea">
-              <strong>연면적:</strong> {{ item.totalArea }}㎡
             </p>
           </div>
         </div>
@@ -330,31 +322,7 @@ const getUserLocation = async () => {
             lon: position.coords.longitude
           }
 
-          // 내 위치 마커 추가
-          viewer.entities.add({
-            position: Cesium.Cartesian3.fromDegrees(
-              userLocation.value.lon,
-              userLocation.value.lat,
-              0
-            ),
-            point: {
-              pixelSize: 20,
-              color: Cesium.Color.BLUE,
-              outlineColor: Cesium.Color.WHITE,
-              outlineWidth: 3
-            },
-            label: {
-              text: '내 위치',
-              font: '16px sans-serif',
-              fillColor: Cesium.Color.WHITE,
-              outlineColor: Cesium.Color.BLACK,
-              outlineWidth: 2,
-              style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-              verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-              pixelOffset: new Cesium.Cartesian2(0, -25),
-              disableDepthTestDistance: Number.POSITIVE_INFINITY
-            }
-          })
+      
 
           resolve()
         },
@@ -1080,7 +1048,6 @@ const registerClickHandler = () => {
             buildingType: props.a9 || '정보 없음',  // A9: 건물 용도
             buildingArea: props.a12 || '정보 없음',  // A12: 건축면적
             totalArea: props.a13 || '정보 없음',  // A13: 연면적
-            capacity: props.a22 || '정보 없음',  // A22: 수용인원
             facilityType: props.vt_acmdfclty_se_nm || props.type || '대피소',  // 시설구분명
             lat,
             lon,

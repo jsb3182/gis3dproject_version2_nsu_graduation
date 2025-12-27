@@ -1,7 +1,7 @@
 <!-- src/views/forgotpassword.vue -->
 <template>
   <div class="min-vh-100 d-flex align-items-start justify-content-center bg-body-tertiary py-4">
-    <div class="container-fluid px-3" style="max-width: 420px;">
+    <div style="width: 100%; max-width: 420px; padding: 0 1rem;">
       <!-- Brand: 전체 이미지를 사용 -->
       <div class="text-start mb-3">
 
