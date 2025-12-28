@@ -29,8 +29,11 @@ Vue 3 + Vite 기반 WebGIS 프론트엔드입니다+ backend full stack.
 ## Development
 npm install
 npm run dev
-<img width="967" height="792" alt="image" src="https://github.com/user-attachments/assets/b6a23e01-06d1-45bd-9e6e-75acbcea3144" />\
+
 제작중인 화면 
+<img width="967" height="792" alt="image" src="https://github.com/user-attachments/assets/b6a23e01-06d1-45bd-9e6e-75acbcea3144" />\
+
+
 시스템 아키텍쳐
 <img width="768" height="553" alt="image" src="https://github.com/user-attachments/assets/15f13d65-c699-479c-88e7-cb5c55d60238" />
 
