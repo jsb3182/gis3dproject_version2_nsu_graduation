@@ -15,7 +15,7 @@ import * as Cesium from 'cesium';
 // ========================================================================
 
 /** @constant {string} CESIUM_ION_TOKEN - Cesium Ion 기본 접근 토큰 */
-export const CESIUM_ION_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhZWJiMDRjNi05MDZlLTRiOWMtYTU5OC0yY2Q2MGM2NzE4ODMiLCJpZCI6MzY3MzEyLCJpYXQiOjE3NjUwODQwMTV9.Qwe6fyt1Ooat6PUTnulbjvQXSFAYmL0J3kPc83FG7gA';
+export const CESIUM_ION_TOKEN = import.meta.env.VITE_CESIUM_ION_TOKEN;
 
 /** @constant {string} VWORLD_3D_TILES_URL - 브이월드 3D 건물 타일셋 URL (수정됨) */
 export const VWORLD_3D_TILES_URL = 'https://xdworld.vworld.kr/TDServer/services/vworld_3d_facility/tileset.json';
