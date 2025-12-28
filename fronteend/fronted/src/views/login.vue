@@ -1,57 +1,65 @@
 <template>
-  <div class="min-vh-100 d-flex align-items-start justify-content-center bg-body-tertiary py-4"
-  style="">
-    <!-- 고정 폭 컨테이너 (반응형 X) -->
-     <div style="width: 100%; max-width: 420px;">
-      <!-- Brand: 전체 이미지를 쓰는 경우 -->
-      <div class="text-center mb-3">
-        <!-- 전체 로고(아이콘+텍스트)가 하나의 이미지인 경우 -->
-        <!-- src/assets/logo.png 파일 준비되어 있으면 아래 경로 그대로 사용 -->
-      </div>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card shadow">
+          <div class="card-body p-5">
+            <h2 class="text-center mb-4 fw-bold">로그인</h2>
 
-      <div class="card shadow-sm">
-        <div class="card-body p-4 ">
-          <h2 class="h5 text-center text-dark text-bold mb-4">로그인</h2>
-
-          <form class="needs-validation" novalidate @submit.prevent="onSubmit" :class="{ 'was-validated': tried }">
-            <!-- 아이디 -->
-            <div class="mb-3">
-              <label class="text-medium form-label">아이디</label>
-              <input v-model.trim="form.username" type="text" class="form-control text-plight" placeholder="아이디를 입력해주세요" required />
-              <div class="invalid-feedback ">아이디를 입력해주세요.</div>
+            <!-- 에러 메시지 -->
+            <div v-if="errorMessage" class="alert alert-danger" role="alert">
+              {{ errorMessage }}
             </div>
 
-            <!-- 비밀번호 -->
-            <div class="mb-5">
-              <label class="text-medium form-label">비밀번호</label>
-              <div class="input-group">
-                <span class="input-group-text">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20 " height="20" viewBox="0 0 24 24">
-		              <path fill="#AAAABC" d="M12 17a2 2 0 0 0 2-2a2 2 0 0 0-2-2a2 2 0 0 0-2 2a2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5a5 5 0 0 1 5 5v2zm-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3" />
-	                </svg>
-                </span>
-                <input v-model="form.password" type="password" class="form-control text-plight" placeholder="비밀번호를 입력해주세요"
-                  required />
-                <div class="invalid-feedback">비밀번호를 입력해주세요.</div>
+            <!-- 성공 메시지 -->
+            <div v-if="successMessage" class="alert alert-success" role="alert">
+              {{ successMessage }}
+            </div>
+
+            <!-- 로그인 폼 -->
+            <form @submit.prevent="handleLogin">
+              <div class="mb-3">
+                <label for="email" class="form-label">이메일</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  v-model="formData.email"
+                  required
+                  placeholder="example@email.com"
+                />
               </div>
+
+              <div class="mb-3">
+                <label for="password" class="form-label">비밀번호</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password"
+                  v-model="formData.password"
+                  required
+                  placeholder="비밀번호를 입력하세요"
+                />
+              </div>
+
+              <div class="d-grid gap-2">
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-lg"
+                  :disabled="loading"
+                >
+                  <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  {{ loading ? '로그인 중...' : '로그인' }}
+                </button>
+              </div>
+            </form>
+
+            <div class="text-center mt-3">
+              <p class="text-muted">
+                계정이 없으신가요?
+                <router-link to="/register" class="text-primary">회원가입</router-link>
+              </p>
             </div>
-
-            <!-- 로그인 버튼 -->
-            <button type="submit" class="btn btn-primary w-100 text-bold" :disabled="!canSubmit || isLoading" >
-              {{ isLoading ? '로그인 중...' : '로그인' }}
-            </button>
-          </form>
-
-          <!-- 하단 링크: 아이디 찾기 | 비밀번호 찾기 | 회원가입 -->
-          <div class="d-flex align-items-center justify-content-center gap-3 mt-4 small">
-            <a href="#" class="link-secondary text-decoration-none text-nowrap text-medium" @click.prevent="goFindId">아이디
-              찾기</a>
-            <span class="text-body-secondary">|</span>
-            <a href="#" class="link-secondary text-decoration-none text-nowrap text-medium" @click.prevent="goFindPw">비밀번호
-              찾기</a>
-            <span class="text-body-secondary">|</span>
-            <a href="#" class="link-secondary text-decoration-none text-nowrap text-medium"
-              @click.prevent="goSignup">회원가입</a>
           </div>
         </div>
       </div>
@@ -60,73 +68,67 @@
 </template>
 
 <script setup>
-import { reactive, ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { setUser } from '@/utils/userService.js'
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { login } from '@/api/auth';
 
-const router = useRouter()
+const router = useRouter();
 
-const form = reactive({
-  username: '',
-  password: '',
-})
+const formData = ref({
+  email: '',
+  password: ''
+});
 
-const tried = ref(false)
-const isLoading = ref(false)
+const loading = ref(false);
+const errorMessage = ref('');
+const successMessage = ref('');
 
-const canSubmit = computed(() => form.username && form.password)
+async function handleLogin() {
+  loading.value = true;
+  errorMessage.value = '';
+  successMessage.value = '';
 
-async function onSubmit() {
-  tried.value = true
-
-  // 아이디와 비밀번호 입력하지 않으면 alert창 띄우기
-  if (!form.username || !form.password) {
-    alert('아이디와 비밀번호를 입력해주세요.')
-    return
-  }
-
-  isLoading.value = true;
   try {
-    // TODO: 백엔드 API로 로그인 처리
-    console.log("백엔드 로그인 시도:", form);
+    const result = await login(formData.value.email, formData.value.password);
 
-    // 임시 로직: 사용자 정보를 로컬 스토리지에 저장하고 홈으로 이동
-    const isAdmin = form.username.includes('admin');
-    const tempUser = {
-      uid: `temp_${Date.now()}`,
-      name: isAdmin ? '관리자' : '일반사용자',
-      username: form.username,
-      email: `${form.username}@example.com`,
-      phone: '010-1234-5678',
-      role: isAdmin ? 'admin' : 'user'
-    };
-    setUser(tempUser);
+    if (result.success) {
+      successMessage.value = '로그인 성공!';
 
-    alert('로그인에 성공했습니다! (백엔드 연동 필요)');
-
-    if (isAdmin) {
-      router.push('/AdminHome');
+      // 1초 후 홈으로 이동
+      setTimeout(() => {
+        router.push('/');
+      }, 1000);
     } else {
-      router.push('/');
+      errorMessage.value = result.message || '로그인에 실패했습니다.';
     }
-
   } catch (error) {
-    console.error('로그인 오류:', error)
-    alert('아이디, 비밀번호를 다시 확인해주세요.')
+    console.error('로그인 오류:', error);
+    errorMessage.value = '로그인 중 오류가 발생했습니다.';
   } finally {
-    isLoading.value = false
+    loading.value = false;
   }
-}
-
-function goFindId() {
-  router.push('/forgotid')
-}
-
-function goFindPw() {
-  router.push('/forgotpassword')
-}
-
-function goSignup() {
-  router.push('/sginup')
 }
 </script>
+
+<style scoped>
+.card {
+  border: none;
+  border-radius: 15px;
+}
+
+.form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.btn-primary {
+  background-color: #0d6efd;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background-color: #0b5ed7;
+}
+</style>
