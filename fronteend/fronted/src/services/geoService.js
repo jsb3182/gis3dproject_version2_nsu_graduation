@@ -19,7 +19,7 @@ import { convertEPSG5174ToWGS84 } from '@/utils/coordinateConverter'
  */
 const GEOSERVER_CONFIG = {
   baseURL: '/api-geoserver',  // 로컬 GeoServer 프록시 사용
-  workspace: 'nsugis_version2',
+  workspace: 'gisgraduation_version2',
 
   // GeoServer 레이어 이름
   layers: {
@@ -30,7 +30,16 @@ const GEOSERVER_CONFIG = {
     node: 'node',
     thematicmerge: 'thematicmerge',
     chbuildclip: 'chbuildclip',
-    shelter: 'shelter'
+    shelter: 'shelter',
+    deb: 'deb'
+  },
+
+  // 레이어별 maxFeatures 설정 (메모리 절약)
+  layerMaxFeatures: {
+    deb: 5000,  // 토지피복도는 5000개로 제한 (메모리 절약)
+    build: 10000,
+    chbuildclip: 10000,
+    default: 50000
   }
 }
 
@@ -52,13 +61,16 @@ const geoService = {
 
       const url = `${GEOSERVER_CONFIG.baseURL}/wfs`
 
+      // 레이어별로 다른 maxFeatures 적용
+      const layerMaxFeatures = GEOSERVER_CONFIG.layerMaxFeatures[layerName] || GEOSERVER_CONFIG.layerMaxFeatures.default
+
       const params = {
         service: 'WFS',
         version: '1.0.0',
         request: 'GetFeature',
         typeName: `${GEOSERVER_CONFIG.workspace}:${layerName}`,
         outputFormat: 'application/json',
-        maxFeatures: options.maxFeatures || 1000,
+        maxFeatures: options.maxFeatures || layerMaxFeatures,
         srsName: 'EPSG:5174'
       }
 
@@ -66,8 +78,10 @@ const geoService = {
         params.bbox = options.bbox.join(',')
       }
 
+      console.log(`[geoService.getFeatures] 🔵 ${layerName} 요청 시작:`, url, params)
       const response = await axios.get(url, { params })
       const data = response.data
+      console.log(`[geoService.getFeatures] ✅ ${layerName} 응답 받음:`, data)
 
       if (!data || !Array.isArray(data.features)) {
         console.error(`[geoService.getFeatures] ${layerName} 응답에 features가 없습니다:`, data)
@@ -86,7 +100,8 @@ const geoService = {
    */
   async getAllLayers() {
     try {
-      const [build, chmergr, chspoint, link, node, thematicmerge, chbuildclip, shelter] = await Promise.all([
+      console.log('[geoService.getAllLayers] 🚀 모든 레이어 조회 시작')
+      const [build, chmergr, chspoint, link, node, thematicmerge, chbuildclip, shelter,deb] = await Promise.all([
         this.getFeatures(GEOSERVER_CONFIG.layers.build),
         this.getFeatures(GEOSERVER_CONFIG.layers.chmergr),
         this.getFeatures(GEOSERVER_CONFIG.layers.chspoint),
@@ -94,10 +109,12 @@ const geoService = {
         this.getFeatures(GEOSERVER_CONFIG.layers.node),
         this.getFeatures(GEOSERVER_CONFIG.layers.thematicmerge),
         this.getFeatures(GEOSERVER_CONFIG.layers.chbuildclip),
-        this.getFeatures(GEOSERVER_CONFIG.layers.shelter)
+        this.getFeatures(GEOSERVER_CONFIG.layers.shelter),
+        this.getFeatures(GEOSERVER_CONFIG.layers.deb)
       ])
 
-      return { build, chmergr, chspoint, link, node, thematicmerge, chbuildclip, shelter }
+      console.log('[geoService.getAllLayers] ✅ 모든 레이어 조회 완료')
+      return { build, chmergr, chspoint, link, node, thematicmerge, chbuildclip, shelter,deb }
     } catch (error) {
       console.error('[geoService.getAllLayers] 전체 레이어 데이터 조회 실패:', error)
       throw error
