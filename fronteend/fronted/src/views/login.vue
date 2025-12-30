@@ -76,7 +76,7 @@ async function handleLogin(){
     await memberApi.login(formData.value.loginId, formData.value.password);
     //부분추가
     localStorage.setItem('user',JSON.stringify({loginId: formData.value.loginId}));
-    router.push('/HomeView');
+    router.push('/');
   }catch (error) {
     alert('로그인 정보가 틀렸습니다');
   }finally {

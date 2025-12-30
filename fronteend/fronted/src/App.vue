@@ -198,8 +198,8 @@
 </template>
 
 <script>
-import { onMounted, ref } from 'vue';
-import { RouterView } from 'vue-router'
+import { onMounted, ref, watch } from 'vue'
+import { RouterView, useRouter } from 'vue-router'
 
 export default {
   name: 'App',
@@ -210,7 +210,6 @@ export default {
       return this.$route.path.startsWith('/Admin')
     },
     isAuthRoute() {
-      // 로그인, 회원가입, 비밀번호/아이디 찾기 페이지인지 확인
       const authPaths = ['/login', '/sginup', '/forgotpassword', '/forgotid']
       return authPaths.includes(this.$route.path)
     }
@@ -226,16 +225,10 @@ export default {
     goToLogin() { this.$router.push('/login') },
     goToAdminHome() { this.$router.push('/AdminHome') },
 
-    goTo(path) {
-      this.$router.push(path)
-    },
-
-    isActive(path) {
-      return this.$route.path === path
-    },
+    goTo(path) { this.$router.push(path) },
+    isActive(path) { return this.$route.path === path },
 
     logout() {
-      // localStorage에서 사용자 정보 제거
       localStorage.removeItem('user')
       alert('로그아웃 되었습니다.')
       this.$router.push('/login')
@@ -249,19 +242,26 @@ export default {
 
   setup() {
     const status = ref('로그인')
+    const router = useRouter()
 
-    onMounted(() => {
-      // localStorage에서 사용자 정보 확인
+    const checkLoginStatus = () => {
       const user = localStorage.getItem('user')
       status.value = user ? '로그아웃' : '로그인'
+    }
+
+    onMounted(() => {
+      checkLoginStatus()
+    })
+
+    watch(() => router.currentRoute.value.path, () => {
+      checkLoginStatus()
     })
 
     return { status }
   }
 }
-
-
 </script>
+
 
 <style>
 

@@ -31,17 +31,24 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // API 경로 및 정적 리소스 허용
-                        .requestMatchers("/api/members/**", "/login", "/signup", "/css/**", "/js/**").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/members/**", "/api/posts/**", "/api/guestbooks/**", "/login", "/signup", "/css/**", "/js/**").permitAll()
+                        .anyRequest().authenticated() // 게시판 방문로 접근 허용
                 )
-                // 3. 폼 로그인 설정
+                // 3. 폼 로그인 설정 .. //이벤트 핸들러 추가하기
                 .formLogin(login -> login
-                        .loginProcessingUrl("/login")    // Vue에서 요청 보낼 주소
+                        .loginProcessingUrl("/login")
                         .usernameParameter("loginId")
                         .passwordParameter("password")
-                        // REST API 환경에서는 성공 시 리다이렉트보다 상태 코드 반환이 선호되지만,
-                        // 우선 기존 방식대로 유지하거나 SuccessHandler를 커스텀할 수 있습니다.
-                        .defaultSuccessUrl("http://localhost:5173/HomeView", true)
+                        .successHandler((request, response, authentication) -> {
+                            response.setStatus(200);
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.getWriter().write("{\"success\": true}");
+                        })
+                        .failureHandler((request, response, exception) -> {
+                            response.setStatus(401);
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.getWriter().write("{\"success\": false}");
+                        })
                         .permitAll()
                 )
                 .logout(logout -> logout
