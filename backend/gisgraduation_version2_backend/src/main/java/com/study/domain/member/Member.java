@@ -20,9 +20,8 @@ public class Member {
     @Column(nullable = false)
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "gender_enum", nullable = false)
-    private Gender gender;
+    @Column(nullable = false, length = 1)
+    private String gender;
 
     @Column(nullable = false)
     private LocalDate birthday;
@@ -44,7 +43,7 @@ public class Member {
     //setter는 코드에 일부만 있고 “Generate로 만들라”고 되어 있지? → 값 수정 기능이 필요하면 setter도 만들어야 함.
 
     public Member() {}// jpa 기본 생성자
-    public Member(String loginId, String password, String name, Gender gender, LocalDate birthday) {
+    public Member(String loginId, String password, String name, String gender, LocalDate birthday) {
         this.loginId = loginId;
         this.password = password;
         this.name = name;
@@ -66,8 +65,8 @@ public class Member {
     public String getName(){return name;}
     public void setName(String name){this.name = name;}
 
-    public Gender getGender(){return gender;}
-    public void setGender(Gender gender){this.gender = gender;}
+    public String getGender(){return gender;}
+    public void setGender(String gender){this.gender = gender;}
 
     public LocalDate getBirthday(){return birthday;}
     public void setBirthday(LocalDate birthday) {this.birthday = birthday;}
