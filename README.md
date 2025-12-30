@@ -111,7 +111,6 @@
 
 ### External APIs
 - **GeoServer WFS**: 병원 데이터 실시간 로딩
-- **Tmap API**: 경로 탐색
 - **VWorld API**: 2D 베이스맵
 - **Cesium Ion**: 3D 지형 및 이미지
 
