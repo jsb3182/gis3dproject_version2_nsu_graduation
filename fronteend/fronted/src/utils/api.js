@@ -1,7 +1,7 @@
 import axios from 'axios';
 // axios 기본설정 
 const api = axios.create({
-  baseURL: 'https://localhost:80801',//백엔드 주소 설정
+  baseURL: 'http://localhost:8081',//백엔드 주소 설정
    headers:{
     'Content-Type': 'application/json', // JSON 형식의 데이터 전송을 위해 필요
    },
@@ -9,16 +9,18 @@ const api = axios.create({
 });
 //회원 관련 API
 export const memberApi = {
-  //회원가입 (POST /api/members/sinup)
+  // 회원가입: JSON 객체 전송
   signup: (userData) => api.post('/api/members/signup', userData),
-  //로그인 포스트 로그인 스프링 세큐리티 기본 경로
-  login:(credentials) => {
-    //시큐리티는 기본적으로  x-www-form-urlencoded 방식을 사용함amfh FromData로 보냄
-    const formData = new FormData();
-    formData.append('loginId', credentials.loginId);
-    formData.append('password', credentials.password);
-    return api.post('/login', formData, {
-      headers: {'Content-Type' : 'multipart/form-data'}
+
+  // 로그인: 시큐리티 설정에 따라 방식을 맞춰야 함
+  login: (loginId, password) => {
+    // 스프링 시큐리티 기본 폼 로그인을 사용한다면 URLSearchParams가 정석입니다.
+    const params = new URLSearchParams();
+    params.append('loginId', loginId); // 시큐리티 기본 설정은 'loginId'일 수 있음 세큐리티에서 아이디 를 기대하기 때문에
+    params.append('password', password);
+
+    return api.post('/login', params, {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     });
   }
 };

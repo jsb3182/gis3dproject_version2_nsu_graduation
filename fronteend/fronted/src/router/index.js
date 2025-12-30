@@ -19,7 +19,7 @@ const router = createRouter({
       path: "/signup",
       name: "signup",
       // 이미지 확인 결과: sginup.vue (오타 상태 그대로 연결)
-      component: () => import("../views/sginup.vue"),
+      component: () => import("../views/signup.vue"),
       meta: { isAuthRoute: true },
     },
     {

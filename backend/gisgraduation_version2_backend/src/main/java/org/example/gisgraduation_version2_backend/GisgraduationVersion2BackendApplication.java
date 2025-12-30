@@ -9,8 +9,8 @@ import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication(scanBasePackages = {"org.example", "com.study"}) // 1. 모든 컴포넌트 스캔
-@EnableJpaRepositories(basePackages = "com.study.domain.member")        // 2. 리포지토리 위치 지정
-@EntityScan(basePackages = "com.study.domain.member")                  // 3. 엔티티(@Entity) 위치 지정
+@EnableJpaRepositories(basePackages = {"com.study.domain.member","com.study.domain.post","com.study.domain.guestbook"})        // 2. 리포지토리 위치 지정
+@EntityScan(basePackages = {"com.study.domain.member","com.study.domain.post","com.study.domain.guestbook"})                  // 3. 엔티티(@Entity) 위치 지정
 public class GisgraduationVersion2BackendApplication {
 
     private static final Logger logger =
