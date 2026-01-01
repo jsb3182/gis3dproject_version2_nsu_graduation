@@ -31,7 +31,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // API 경로 및 정적 리소스 허용
-                        .requestMatchers("/api/members/**", "/api/posts/**", "/api/guestbooks/**", "/login", "/signup", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/api/members/**", "/api/posts/**", "/api/guestbooks/**", "/api/shelters/**", "/login", "/signup", "/css/**", "/js/**").permitAll()
                         .anyRequest().authenticated() // 게시판 방문로 접근 허용
                 )
                 // 3. 폼 로그인 설정 .. //이벤트 핸들러 추가하기

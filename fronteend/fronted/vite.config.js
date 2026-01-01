@@ -26,6 +26,11 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api-geoserver/, '/geoserver')
+      },
+      '/api': {
+        target: 'http://localhost:8081',
+        changeOrigin: true,
+        secure: false
       }
     }
   }
