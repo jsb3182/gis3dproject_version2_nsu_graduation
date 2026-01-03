@@ -3,3 +3,5 @@ dist/
 .idea/
 .env
 python/
+# Claude / AI tool local settings
+.claude/

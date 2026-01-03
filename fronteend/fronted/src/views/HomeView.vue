@@ -7,7 +7,7 @@
     </div>
 
     <!-- 내 위치 새로고침 버튼 -->
-    <div class="position-fixed end-0 p-3" style="top: 8px; z-index: 2;">
+    <div class="position-fixed end-0 p-3" style="top: calc(var(--header-h) + 8px); z-index: 2;">
       <button type="button" class="btn btn-primary border rounded-circle shadow-sm" @click="refreshLocation()"
         :disabled="loadingLocation" style="width: 48px; height: 48px; padding: 0;">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -18,8 +18,8 @@
     </div>
 
     <!-- 검색 패널 (왼쪽 상단) -->
-    <div class="position-fixed start-0 p-3" style="top: 8px; z-index: 2;">
-      <div class="card shadow-sm" style="min-width: 300px;">
+    <div class="position-fixed start-0 p-3" style="top: calc(var(--header-h) + 8px); z-index: 2;">
+      <div class="card shadow-sm" style="min-width: 320px; max-width: 400px;">
         <div class="card-body">
           <h5 class="card-title mb-3">
             <i class="bi bi-shield-fill-exclamation text-danger"></i>
@@ -39,7 +39,10 @@
             <small>
               <i class="bi bi-geo-fill"></i>
               위도: {{ userLocation.lat.toFixed(6) }}<br>
-              경도: {{ userLocation.lon.toFixed(6) }}
+              경도: {{ userLocation.lon.toFixed(6) }}<br>
+              <span v-if="userLocation.accuracy" class="text-muted">
+                정확도: ±{{ Math.round(userLocation.accuracy) }}m
+              </span>
             </small>
           </div>
 
@@ -63,8 +66,36 @@
           </div>
 
           <!-- 대피소 개수 -->
-          <div v-if="shelters.length > 0" class="text-muted text-center">
+          <div v-if="shelters.length > 0" class="text-muted text-center mb-3">
             <small>총 {{ shelters.length }}개 대피소 발견</small>
+          </div>
+
+          <!-- 가장 가까운 대피소 3개 표시 -->
+          <div v-if="topShelters.length > 0" class="mt-3">
+            <h6 class="text-muted small mb-2">
+              <i class="bi bi-map-fill"></i>
+              가까운 대피소 TOP 3
+            </h6>
+            <div class="list-group list-group-flush">
+              <div v-for="(shelter, idx) in topShelters" :key="shelter.번호"
+                   class="list-group-item list-group-item-action p-2 cursor-pointer shelter-top-card"
+                   @click="flyToShelter(shelter)"
+                   :class="{ 'bg-light': shelter['번호'] === selectedMarkerId }">
+                <div class="d-flex align-items-start">
+                  <span class="badge bg-primary me-2">{{ idx + 1 }}</span>
+                  <div class="flex-grow-1" style="min-width: 0;">
+                    <div class="fw-bold small text-truncate">{{ shelter['시설명'] }}</div>
+                    <div class="text-muted" style="font-size: 0.75rem;">
+                      <i class="bi bi-geo-alt"></i>
+                      {{ (shelter.distance / 1000).toFixed(2) }}km
+                      <span class="mx-1">|</span>
+                      <i class="bi bi-people-fill"></i>
+                      {{ shelter['최대수용인원'] ? Math.round(shelter['최대수용인원']).toLocaleString() : '-' }}명
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -178,32 +209,54 @@ const sheetStyle = computed(() => ({
   willChange: 'transform'
 }))
 
+// TOP 3 가까운 대피소
+const topShelters = computed(() => {
+  return shelters.value.slice(0, 3)
+})
+
 // ====================================
 // 지도 초기화
 // ====================================
 const initMap = async () => {
+  console.log('🚀 initMap 함수 시작')
+
   // VWorld 라이브러리 로드 대기
-  await new Promise((resolve) => {
+  await new Promise((resolve, reject) => {
+    console.log('🔍 VWorld 라이브러리 로드 확인 중...')
+    let attempts = 0
+    const maxAttempts = 100 // 10초
+
     const checkVworld = setInterval(() => {
+      attempts++
+
       if (window.vw && window.vw.ol3 && window.ol) {
+        console.log('✅ VWorld 라이브러리 로드 완료')
         clearInterval(checkVworld)
         resolve()
+      } else if (attempts >= maxAttempts) {
+        console.error('❌ VWorld 라이브러리 로드 타임아웃')
+        clearInterval(checkVworld)
+        reject(new Error('VWorld 라이브러리를 로드할 수 없습니다.'))
       }
     }, 100)
   })
 
   try {
     // 기본 위치 (서울)
+    console.log('📍 기본 위치 설정: 서울 시청')
     let centerCoords = ol.proj.transform([126.9780, 37.5665], 'EPSG:4326', 'EPSG:3857')
 
     // 지도 초기화
+    console.log('🗺️ VWorld 지도 초기화 시작...')
     vmap = initVworldMap({
       containerId: 'vmap',
       defaultCenter: centerCoords,
       defaultZoom: 12
     })
 
-    if (!vmap) throw new Error('vmap 초기화 실패')
+    if (!vmap) {
+      throw new Error('vmap 초기화 실패: initVworldMap이 null을 반환했습니다.')
+    }
 
     // 마커 클릭 이벤트
     setupMarkerClick(onMarkerClick)
@@ -211,7 +264,9 @@ const initMap = async () => {
     console.log('✅ 브이월드 지도 초기화 완료')
   } catch (error) {
     console.error('❌ 지도 초기화 실패:', error)
-    alert('지도를 불러오는데 실패했습니다.')
+    console.error('에러 상세:', error.message)
+    console.error('에러 스택:', error.stack)
+    alert('지도를 불러오는데 실패했습니다. VWorld API가 로드되지 않았거나 네트워크 문제가 있을 수 있습니다.')
   }
 }
 
@@ -223,9 +278,10 @@ const getUserLocation = async () => {
 
   try {
     const location = await getCurrentLocation()
-    userLocation.value = location
 
+    userLocation.value = location
     console.log('✅ 사용자 위치:', location.lat, location.lon)
+    console.log('📍 정확도: ±' + Math.round(location.accuracy) + 'm')
 
     // 지도 중심 이동
     if (vmap) {
@@ -236,7 +292,7 @@ const getUserLocation = async () => {
     }
 
     // 사용자 위치 마커
-    addUserMarker(location.lat, location.lon)
+    addUserMarker(location.lon, location.lat)
 
     // 자동 검색
     await searchShelters()
@@ -249,7 +305,7 @@ const getUserLocation = async () => {
   }
 }
 
-const addUserMarker = (lat, lon) => {
+const addUserMarker = (lon, lat) => {
   addMarkerHospital(lon, lat, {
     iconUrl: 'data:image/svg+xml;utf8,' + encodeURIComponent(`
       <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
@@ -299,10 +355,25 @@ const searchShelters = async () => {
 }
 
 const displaySheltersOnMap = () => {
+  console.log('🗺️ displaySheltersOnMap 호출됨')
+  console.log('shelters.value 개수:', shelters.value.length)
+
+  if (shelters.value.length > 0) {
+    console.log('첫 번째 대피소 데이터:', shelters.value[0])
+  }
+
   clearMarkers()
 
+  // 사용자 위치 마커 다시 표시
+  if (userLocation.value) {
+    addUserMarker(userLocation.value.lon, userLocation.value.lat)
+  }
+
+  let successCount = 0
+  let failCount = 0
+
   shelters.value.forEach((shelter, index) => {
-    addMarkerHospital(shelter.lon, shelter.lat, {
+    const marker = addMarkerHospital(shelter.lon, shelter.lat, {
       iconUrl: 'data:image/svg+xml;utf8,' + encodeURIComponent(`
         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="50" viewBox="0 0 40 50">
           <path d="M20 0C9 0 0 9 0 20c0 15 20 30 20 30s20-15 20-30C40 9 31 0 20 0z" fill="#0d6efd"/>
@@ -314,9 +385,16 @@ const displaySheltersOnMap = () => {
       anchor: [0.5, 1],
       shelterId: shelter['번호']
     })
+
+    if (marker) {
+      successCount++
+    } else {
+      failCount++
+      console.error(`마커 추가 실패 - ${shelter['시설명']}`)
+    }
   })
 
-  console.log(`✅ ${shelters.value.length}개 마커 표시 완료`)
+  console.log(`✅ 마커 추가 결과: 성공 ${successCount}개, 실패 ${failCount}개`)
 }
 
 const flyToShelter = (shelter) => {
@@ -385,8 +463,15 @@ const toggleSheet = () => {
 // ====================================
 // Lifecycle
 // ====================================
-onMounted(async () => {
-  await initMap()
+onMounted(() => {
+  console.log('📌 onMounted 실행')
+  initMap()
+    .then(() => {
+      console.log('✅ 지도 초기화 완료')
+    })
+    .catch(err => {
+      console.error('❌ onMounted에서 지도 초기화 실패:', err)
+    })
 })
 
 onBeforeUnmount(() => {
@@ -432,5 +517,20 @@ onBeforeUnmount(() => {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   touch-action: pan-y;
+}
+
+.shelter-top-card {
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.shelter-top-card:hover {
+  background-color: #f0f6ff !important;
+  border-color: #0d6efd;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 </style>

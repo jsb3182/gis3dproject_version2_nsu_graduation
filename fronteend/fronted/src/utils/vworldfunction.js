@@ -331,15 +331,22 @@ const createMarkerIcon = (bedAvail, bedTotal, hospitalName, emergencyMessage, is
 };
 
 
-// HospitalInformation marker 생성 
+// HospitalInformation marker 생성
 export function addMarkerHospital(lon, lat, props = {}) {
   if (!vectorSource) {
-    console.warn("vectorSource가 초기화되지 않았습니다.");
+    console.warn("❌ vectorSource가 초기화되지 않았습니다.");
     return null;
   }
 
   try {
     const point4326 = [Number(lon), Number(lat)];
+
+    // NaN 체크
+    if (isNaN(point4326[0]) || isNaN(point4326[1])) {
+      console.error(`❌ 잘못된 좌표: lon=${lon}, lat=${lat}`);
+      return null;
+    }
+
     const p3857 = ol.proj.transform(point4326, "EPSG:4326", "EPSG:3857");
     const feature = new ol.Feature({
       geometry: new ol.geom.Point(p3857),
@@ -358,7 +365,7 @@ export function addMarkerHospital(lon, lat, props = {}) {
     vectorSource.addFeature(feature);
     return feature;
   } catch (e) {
-    console.error("마커 추가 실패", e);
+    console.error("❌ 마커 추가 중 오류:", e);
     return null;
   }
 }

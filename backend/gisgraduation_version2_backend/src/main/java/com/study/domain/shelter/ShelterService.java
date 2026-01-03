@@ -1,13 +1,7 @@
 package com.study.domain.shelter;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,89 +9,50 @@ import java.util.List;
 public class ShelterService {
 
     private final ShelterRepository shelterRepository;
-    private final GeometryFactory geometryFactory;
 
     public ShelterService(ShelterRepository shelterRepository) {
         this.shelterRepository = shelterRepository;
-        // SRID 4326 (WGS84) GeometryFactory 생성
-        this.geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
     }
 
     /**
-     * 주변 대피소 검색
+     * 주변 대피소 조회 (거리 포함, meter 단위)
      */
-    @Transactional(readOnly = true)
-    public List<ShelterDTO> findNearbyShelters(double lat, double lon, double radiusKm) {
-        List<Object[]> results = shelterRepository.findNearbyShelters(lat, lon, radiusKm);
-        List<ShelterDTO> shelters = new ArrayList<>();
+    public List<ShelterNearResponse> findNear(double lon, double lat, double meter, int limit) {
 
-        for (Object[] row : results) {
-            // row[0-10]: shelter 테이블 컬럼들
-            // row[11]: distance (계산된 거리)
+        // 안전장치: 너무 큰 값 방지
+        if (meter <= 0) meter = 500;           // 기본 500m
+        if (limit <= 0) limit = 200;           // 기본 200개
+        if (limit > 1000) limit = 1000;        // 최대 1000개 제한
 
-            Long id = ((BigInteger) row[0]).longValue();
-            String shelterId = (String) row[1];
-            String name = (String) row[2];
-            String address = (String) row[3];
-            Integer capacity = row[4] != null ? (Integer) row[4] : null;
-            Double area = row[5] != null ? ((Number) row[5]).doubleValue() : null;
-            String tel = (String) row[6];
-            String fcltyManageOrg = (String) row[7];
+        System.out.println("📍 Repository 호출 파라미터: lon=" + lon + ", lat=" + lat + ", meter=" + meter + ", limit=" + limit);
 
-            // PostGIS geometry는 바이너리로 반환되므로 JTS로 파싱
-            // 대신 원본 좌표를 사용하는 것이 더 간단함
-            // 하지만 여기서는 별도 쿼리로 좌표 가져오기
-            Shelter shelter = shelterRepository.findById(id).orElse(null);
-            if (shelter == null) continue;
+        List<Object[]> rows = shelterRepository.findNearWithDistance(lon, lat, meter, limit);
 
-            Point point = shelter.getGeom();
-            double shelterLon = point.getX();
-            double shelterLat = point.getY();
+        System.out.println("📊 Repository 리턴 rows.size() = " + rows.size());
 
-            // 거리 (미터)
-            Double distanceMeters = row[11] != null ? ((Number) row[11]).doubleValue() : null;
-            Integer distance = distanceMeters != null ? distanceMeters.intValue() : 0;
+        List<ShelterNearResponse> result = new ArrayList<>();
 
-            ShelterDTO dto = new ShelterDTO(
-                id, name, address, capacity, area, tel, fcltyManageOrg,
-                shelterLon, shelterLat, distance
-            );
+        for (Object[] r : rows) {
+            ShelterNearResponse dto = new ShelterNearResponse();
 
-            shelters.add(dto);
+            // SELECT 순서대로 매핑
+            dto.setGid(r[0] == null ? null : ((Number) r[0]).intValue());                 // gid
+            dto.setManageNumber((String) r[1]);                                           // manage_number
+            dto.setDedongSemugo((String) r[2]);                                           // dedong_semugo
+            dto.setDetailAddress((String) r[3]);                                          // detail_address
+            dto.setAddressNumber((String) r[4]);                                          // address_number
+
+            dto.setMaxDepiPerson(r[5] == null ? null : ((Number) r[5]).doubleValue());    // max_depi_person
+            dto.setMaxArea(r[6] == null ? null : ((Number) r[6]).doubleValue());          // max_area
+
+            dto.setLongitude(r[7] == null ? null : ((Number) r[7]).doubleValue());        // longitude
+            dto.setLatitude(r[8] == null ? null : ((Number) r[8]).doubleValue());         // latitude
+
+            dto.setDistance(r[9] == null ? null : ((Number) r[9]).doubleValue());         // distance (meter)
+
+            result.add(dto);
         }
 
-        return shelters;
-    }
-
-    /**
-     * 대피소 저장 (upsert)
-     */
-    @Transactional
-    public void saveShelter(String shelterId, String name, String address,
-                           Integer capacity, Double area, String tel,
-                           String fcltyManageOrg, double lon, double lat) {
-        Shelter shelter = shelterRepository.findByShelterId(shelterId)
-            .orElse(new Shelter());
-
-        shelter.setShelterId(shelterId);
-        shelter.setName(name);
-        shelter.setAddress(address);
-        shelter.setCapacity(capacity);
-        shelter.setArea(area);
-        shelter.setTel(tel);
-        shelter.setFcltyManageOrg(fcltyManageOrg);
-
-        Point point = geometryFactory.createPoint(new Coordinate(lon, lat));
-        shelter.setGeom(point);
-
-        shelterRepository.save(shelter);
-    }
-
-    /**
-     * 전체 대피소 수
-     */
-    @Transactional(readOnly = true)
-    public long count() {
-        return shelterRepository.count();
+        return result;
     }
 }
