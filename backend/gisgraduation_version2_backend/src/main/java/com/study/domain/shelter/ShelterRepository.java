@@ -3,41 +3,40 @@ package com.study.domain.shelter;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
-@Repository
-public interface ShelterRepository extends JpaRepository<Shelter, Long> {
+public interface ShelterRepository extends JpaRepository<Shelter, Integer> {
 
-    /**
-     * 대피소 ID로 조회
-     */
-    Optional<Shelter> findByShelterId(String shelterId);
-
-    /**
-     * 주어진 위치 주변 대피소 검색 (Haversine distance 사용)
-     * @param lat 위도
-     * @param lon 경도
-     * @param radiusKm 반경 (km)
-     * @return 거리순 정렬된 대피소 목록
-     */
     @Query(value = """
-        SELECT s.*,
-               ST_Distance(s.geom::geography, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)::geography) AS distance
-        FROM shelter s
-        WHERE ST_DWithin(
-            s.geom::geography,
-            ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)::geography,
-            :radiusKm * 1000
-        )
+        SELECT
+            gid,                -- 0
+            manage_number,      -- 1
+            dedong_semugo,      -- 2
+            detail_address,     -- 3
+            address_number,     -- 4
+            max_depi_person,    -- 5
+            max_area,           -- 6
+            longitude,          -- 7
+            latitude,           -- 8
+            ST_Distance(
+                geom::geography,
+                ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)::geography
+            ) AS distance       -- 9 (meter)
+        FROM minbangwi
+        WHERE geom IS NOT NULL
+          AND ST_DWithin(
+              geom::geography,
+              ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)::geography,
+              :meter
+          )
         ORDER BY distance
-        LIMIT 100
+        LIMIT :limit
         """, nativeQuery = true)
-    List<Object[]> findNearbyShelters(
-        @Param("lat") double lat,
-        @Param("lon") double lon,
-        @Param("radiusKm") double radiusKm
+    List<Object[]> findNearWithDistance(
+            @Param("lon") double lon,
+            @Param("lat") double lat,
+            @Param("meter") double meter,
+            @Param("limit") int limit
     );
 }

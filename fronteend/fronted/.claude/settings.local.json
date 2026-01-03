@@ -8,7 +8,18 @@
       "Bash(npm run dev:*)",
       "Bash(cat:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(./mvnw clean:*)",
+      "Bash(curl:*)",
+      "Bash(python -m json.tool:*)",
+      "Bash(psql:*)",
+      "Bash(timeout:*)",
+      "Bash(powershell:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(./mvnw spring-boot:run:*)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []

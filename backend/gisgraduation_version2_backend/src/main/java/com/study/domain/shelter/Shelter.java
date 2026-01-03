@@ -4,70 +4,74 @@ import jakarta.persistence.*;
 import org.locationtech.jts.geom.Point;
 
 @Entity
-@Table(name = "shelter", indexes = {
-    @Index(name = "idx_shelter_geom", columnList = "geom")
-})
+@Table(name = "minbangwi")
 public class Shelter {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer gid;
 
-    @Column(name = "shelter_id", unique = true, nullable = false, length = 50)
-    private String shelterId;
+    @Column(name = "manage_number")
+    private String manageNumber;
 
-    @Column(name = "name", nullable = false, length = 200)
+    @Column(name = "dedong_semugo")
     private String name;
 
-    @Column(name = "address", length = 300)
-    private String address;
+    @Column(name = "sisul_gubum")
+    private String facilityType;
 
-    @Column(name = "capacity")
-    private Integer capacity;
+    @Column(name = "underground")
+    private String underground;
 
-    @Column(name = "area")
-    private Double area;
+    @Column(name = "detail_address")
+    private String detailAddress;
 
-    @Column(name = "tel", length = 50)
-    private String tel;
+    @Column(name = "address_number")
+    private String addressNumber;
 
-    @Column(name = "fclty_manage_org", length = 200)
-    private String fcltyManageOrg;
+    @Column(name = "max_depi_person")
+    private Double maxDepiPerson;
 
-    @Column(name = "geom", columnDefinition = "geometry(Point,4326)", nullable = false)
+    @Column(name = "max_area")
+    private Double maxArea;
+
+    @Column(name = "city_code")
+    private String cityCode;
+
+    @Column(name = "city_number")
+    private String cityNumber;
+
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "henjung_code")
+    private String henjungCode;
+
+    @Column(name = "henjung_name")
+    private String henjungName;
+
+    // PostGIS geometry
+    @Column(columnDefinition = "geometry(Point,4326)")
     private Point geom;
 
-    // Constructors
-    public Shelter() {
+    /* =========================
+       getter / setter
+       ========================= */
+
+    public Integer getGid() {
+        return gid;
     }
 
-    public Shelter(String shelterId, String name, String address, Integer capacity,
-                   Double area, String tel, String fcltyManageOrg, Point geom) {
-        this.shelterId = shelterId;
-        this.name = name;
-        this.address = address;
-        this.capacity = capacity;
-        this.area = area;
-        this.tel = tel;
-        this.fcltyManageOrg = fcltyManageOrg;
-        this.geom = geom;
+    public void setGid(Integer gid) {
+        this.gid = gid;
     }
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
+    public String getManageNumber() {
+        return manageNumber;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getShelterId() {
-        return shelterId;
-    }
-
-    public void setShelterId(String shelterId) {
-        this.shelterId = shelterId;
+    public void setManageNumber(String manageNumber) {
+        this.manageNumber = manageNumber;
     }
 
     public String getName() {
@@ -78,44 +82,92 @@ public class Shelter {
         this.name = name;
     }
 
-    public String getAddress() {
-        return address;
+    public String getFacilityType() {
+        return facilityType;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setFacilityType(String facilityType) {
+        this.facilityType = facilityType;
     }
 
-    public Integer getCapacity() {
-        return capacity;
+    public String getUnderground() {
+        return underground;
     }
 
-    public void setCapacity(Integer capacity) {
-        this.capacity = capacity;
+    public void setUnderground(String underground) {
+        this.underground = underground;
     }
 
-    public Double getArea() {
-        return area;
+    public String getDetailAddress() {
+        return detailAddress;
     }
 
-    public void setArea(Double area) {
-        this.area = area;
+    public void setDetailAddress(String detailAddress) {
+        this.detailAddress = detailAddress;
     }
 
-    public String getTel() {
-        return tel;
+    public String getAddressNumber() {
+        return addressNumber;
     }
 
-    public void setTel(String tel) {
-        this.tel = tel;
+    public void setAddressNumber(String addressNumber) {
+        this.addressNumber = addressNumber;
     }
 
-    public String getFcltyManageOrg() {
-        return fcltyManageOrg;
+    public Double getMaxDepiPerson() {
+        return maxDepiPerson;
     }
 
-    public void setFcltyManageOrg(String fcltyManageOrg) {
-        this.fcltyManageOrg = fcltyManageOrg;
+    public void setMaxDepiPerson(Double maxDepiPerson) {
+        this.maxDepiPerson = maxDepiPerson;
+    }
+
+    public Double getMaxArea() {
+        return maxArea;
+    }
+
+    public void setMaxArea(Double maxArea) {
+        this.maxArea = maxArea;
+    }
+
+    public String getCityCode() {
+        return cityCode;
+    }
+
+    public void setCityCode(String cityCode) {
+        this.cityCode = cityCode;
+    }
+
+    public String getCityNumber() {
+        return cityNumber;
+    }
+
+    public void setCityNumber(String cityNumber) {
+        this.cityNumber = cityNumber;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getHenjungCode() {
+        return henjungCode;
+    }
+
+    public void setHenjungCode(String henjungCode) {
+        this.henjungCode = henjungCode;
+    }
+
+    public String getHenjungName() {
+        return henjungName;
+    }
+
+    public void setHenjungName(String henjungName) {
+        this.henjungName = henjungName;
     }
 
     public Point getGeom() {

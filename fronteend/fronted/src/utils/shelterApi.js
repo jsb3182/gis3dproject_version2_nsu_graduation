@@ -1,104 +1,166 @@
 /**
  * 민방위 대피소 API 유틸리티
+ * 백엔드 서버를 통해 대피소 데이터 조회
  */
 
 import axios from 'axios'
 
-// API 설정
-const SHELTER_API_URL = 'https://api.odcloud.kr/api/civildefense/v1/shelter'
-const SERVICE_KEY = 'N3U2QYSHCZz9wpke8PfDjhXocLK4lgHcpcK14ZiNm0na%2FU5A2yP2RScVhonB46UXSkLc9DcyO4ZDHvkw6%2F83cw%3D%3D'
+// 백엔드 API 설정
+const BACKEND_URL = 'http://localhost:8081/api/shelters'
 
 /**
- * 모든 대피소 데이터 가져오기
+ * 주변 대피소 검색 (백엔드 API 사용)
+ * @param {number} lat - 위도
+ * @param {number} lon - 경도
+ * @param {number} radiusKm - 검색 반경 (km)
+ * @returns {Promise<Array>} 대피소 목록
  */
-export async function fetchAllShelters() {
+export async function searchNearbyShelters(lat, lon, radiusKm) {
   try {
-    const response = await axios.get(SHELTER_API_URL, {
+    console.log(`🔍 백엔드 API 호출: lat=${lat}, lon=${lon}, radius=${radiusKm}km`)
+
+    const response = await axios.get(`${BACKEND_URL}/near`, {
       params: {
-        page: 1,
-        perPage: 10000,
-        returnType: 'JSON',
-        serviceKey: SERVICE_KEY
+        lat: lat,
+        lon: lon,
+        km: radiusKm,
+        limit: 200
       }
     })
 
-    return response.data.data || []
+    console.log('✅ 백엔드 응답:', response.data)
+
+    // 백엔드 응답을 프론트엔드 형식으로 변환
+    const shelters = response.data.map(item => ({
+      번호: item.gid,
+      시설명: item.dedongSemugo || '시설명 없음',
+      도로명전체주소: item.detailAddress || item.addressNumber || '주소 정보 없음',
+      최대수용인원: item.maxDepiPerson || 0,
+      면적: item.maxArea || 0,
+      관리번호: item.manageNumber,
+      lat: item.latitude,
+      lon: item.longitude,
+      distance: item.distance || 0
+    }))
+
+    console.log(`✅ ${shelters.length}개 대피소 조회 완료`)
+
+    if (shelters.length > 0) {
+      console.log('첫 번째 대피소:', shelters[0])
+    }
+
+    return shelters
+
   } catch (error) {
-    console.error('❌ 대피소 데이터 조회 실패:', error)
+    console.error('❌ 대피소 검색 실패:', error)
+    console.error('에러 응답:', error.response?.data)
     throw error
   }
 }
 
 /**
- * Haversine 거리 계산 (미터)
+ * 대피소 데이터 새로고침 (공공데이터 API → DB 저장)
  */
-export function calculateDistance(lat1, lon1, lat2, lon2) {
-  const R = 6371e3 // 지구 반지름 (미터)
-  const φ1 = (lat1 * Math.PI) / 180
-  const φ2 = (lat2 * Math.PI) / 180
-  const Δφ = ((lat2 - lat1) * Math.PI) / 180
-  const Δλ = ((lon2 - lon1) * Math.PI) / 180
+export async function refreshShelterData() {
+  try {
+    console.log('🔄 대피소 데이터 새로고침 시작...')
 
-  const a =
-    Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-    Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2)
+    const response = await axios.post(`${BACKEND_URL}/refresh`)
 
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+    console.log('✅ 새로고침 완료:', response.data)
+    return response.data
 
-  return R * c
+  } catch (error) {
+    console.error('❌ 데이터 새로고침 실패:', error)
+    throw error
+  }
 }
 
 /**
- * 주변 대피소 검색 및 거리순 정렬
+ * 저장된 대피소 개수 조회
  */
-export async function searchNearbyShelters(userLat, userLon, radiusKm) {
-  const allShelters = await fetchAllShelters()
+export async function getShelterCount() {
+  try {
+    const response = await axios.get(`${BACKEND_URL}/count`)
+    return response.data.count
 
-  const nearbyShelters = allShelters
-    .map(shelter => {
-      const shelterLat = parseFloat(shelter['위도(EPSG4326)'])
-      const shelterLon = parseFloat(shelter['경도(EPSG4326)'])
-
-      if (isNaN(shelterLat) || isNaN(shelterLon)) return null
-
-      const distance = calculateDistance(userLat, userLon, shelterLat, shelterLon)
-
-      return {
-        번호: shelter['번호'],
-        관리번호: shelter['관리번호'],
-        시설명: shelter['시설명'],
-        도로명전체주소: shelter['도로명전체주소'],
-        최대수용인원: shelter['최대수용인원'],
-        lat: shelterLat,
-        lon: shelterLon,
-        distance: Math.round(distance)
-      }
-    })
-    .filter(shelter => shelter && shelter.distance <= radiusKm * 1000)
-    .sort((a, b) => a.distance - b.distance)
-
-  return nearbyShelters
+  } catch (error) {
+    console.error('❌ 대피소 개수 조회 실패:', error)
+    throw error
+  }
 }
 
 /**
- * 현재 위치 가져오기
+ * 현재 위치 가져오기 (고정밀도)
  */
 export function getCurrentLocation() {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
-      reject(new Error('Geolocation not supported'))
+      reject(new Error('브라우저가 위치 서비스를 지원하지 않습니다'))
       return
+    }
+
+    console.log('📍 GPS 위치 요청 시작...')
+    console.log('위치 권한 상태 확인 중...')
+
+    const options = {
+      enableHighAccuracy: true,  // GPS 사용 (고정밀도)
+      timeout: 15000,            // 15초 대기
+      maximumAge: 0              // 캐시 사용 안 함 (항상 새로운 위치)
     }
 
     navigator.geolocation.getCurrentPosition(
       position => {
-        resolve({
+        const result = {
           lat: position.coords.latitude,
-          lon: position.coords.longitude
+          lon: position.coords.longitude,
+          accuracy: position.coords.accuracy
+        }
+
+        console.log('✅ GPS 위치 수신 성공:', {
+          위도: result.lat,
+          경도: result.lon,
+          정확도: Math.round(result.accuracy) + 'm',
+          고도: position.coords.altitude ? position.coords.altitude + 'm' : '없음',
+          속도: position.coords.speed ? position.coords.speed + 'm/s' : '없음',
+          타임스탬프: new Date(position.timestamp).toLocaleString('ko-KR')
         })
+
+        // 정확도가 너무 낮으면 경고
+        if (result.accuracy > 100) {
+          console.warn('⚠️ 위치 정확도가 낮습니다 (±' + Math.round(result.accuracy) + 'm)')
+          console.warn('💡 GPS 신호가 약할 수 있습니다. 실외로 이동하거나 잠시 후 다시 시도하세요.')
+        }
+
+        resolve(result)
       },
-      error => reject(error),
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      error => {
+        let errorMessage = 'GPS 위치를 가져올 수 없습니다'
+
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = '위치 권한이 거부되었습니다. 브라우저 설정에서 위치 권한을 허용해주세요.'
+            console.error('❌ 위치 권한 거부')
+            break
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = '위치 정보를 사용할 수 없습니다. GPS 신호를 확인해주세요.'
+            console.error('❌ 위치 정보 사용 불가')
+            break
+          case error.TIMEOUT:
+            errorMessage = '위치 요청 시간이 초과되었습니다. 다시 시도해주세요.'
+            console.error('❌ 위치 요청 타임아웃')
+            break
+          default:
+            errorMessage = '알 수 없는 오류가 발생했습니다: ' + error.message
+            console.error('❌ 알 수 없는 오류:', error)
+        }
+
+        console.error('에러 코드:', error.code)
+        console.error('에러 메시지:', error.message)
+
+        reject(new Error(errorMessage))
+      },
+      options
     )
   })
 }
