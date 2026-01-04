@@ -301,11 +301,22 @@ fronted/
 
 ## 스크린샷
 
-### 제작중인 화면
-<img width="967" height="792" alt="image" src="https://github.com/user-attachments/assets/b6a23e01-06d1-45bd-9e6e-75acbcea3144" />
+### 제작 완료 된 화면 
+홈화면 전국 민방위 대피소 지오코딩및 postgresql에 정제하여 4326 좌표 계로 저장
+<img width="1873" height="947" alt="image" src="https://github.com/user-attachments/assets/32156009-ba25-44d4-99af-fd1f24ee7ea4" />
 
+### 공간분석 결과 페이지 Geo Server cesumi.js 사용
+<img width="1839" height="909" alt="image" src="https://github.com/user-attachments/assets/1b566037-0d6b-4e4b-ad89-7091fe9a7379" />
+
+### 게시판 기능 
+<img width="991" height="912" alt="image" src="https://github.com/user-attachments/assets/e3e0a345-741d-47ba-be9a-a8520aa48add" />
+
+### 방문록 기능 
+<img width="997" height="891" alt="image" src="https://github.com/user-attachments/assets/62ddc783-9026-4cbe-9622-d7afab9b79f7" />
+### ai chact bot은 제작중
 ### 시스템 아키텍처
 <img width="768" height="553" alt="image" src="https://github.com/user-attachments/assets/15f13d65-c699-479c-88e7-cb5c55d60238" />
+
 
 ---
 
