@@ -73,11 +73,31 @@ const formData = ref({ loginId: '', password: '' });
 async function handleLogin(){
   loading.value = true;
   try {
+    // 1. 로그인 요청
     await memberApi.login(formData.value.loginId, formData.value.password);
-    //부분추가
-    localStorage.setItem('user',JSON.stringify({loginId: formData.value.loginId}));
+
+    // 2. 로그인 성공 후 사용자 정보 조회
+    const userResponse = await memberApi.getCurrentUser();
+    const userData = userResponse.data;
+
+    // 3. localStorage에 완전한 사용자 정보 저장
+    const userInfo = {
+      id: userData.id,
+      loginId: userData.loginId,
+      username: userData.name || userData.loginId,
+      name: userData.name,
+      gender: userData.gender,
+      birthday: userData.birthday
+    };
+
+    localStorage.setItem('user', JSON.stringify(userInfo));
+    localStorage.setItem('currentUser', JSON.stringify(userInfo));
+
+    console.log('✅ 로그인 성공 - 사용자 정보:', userInfo);
+
     router.push('/');
   }catch (error) {
+    console.error('❌ 로그인 실패:', error);
     alert('로그인 정보가 틀렸습니다');
   }finally {
     loading.value = false;

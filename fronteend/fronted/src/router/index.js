@@ -64,15 +64,39 @@ const router = createRouter({
       component: () => import("../views/GISAnalysis.vue"),
     },
     {
-      path: "/Userboard",
-      name: "Userboard",
-      component: () => import("../views/Userboard.vue"),
+      path: "/userboard",
+      name: "userboard",
+      component: () => import("../views/UserBoardView.vue"),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/userboard/write",
+      name: "userboard-write",
+      component: () => import("../views/PostWriteView.vue"),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/userboard/edit/:id",
+      name: "userboard-edit",
+      component: () => import("../views/PostWriteView.vue"),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/userboard/:id",
+      name: "userboard-detail",
+      component: () => import("../views/PostDetailView.vue"),
       meta: { requiresAuth: true },
     },
     {
       path: "/UserGuestbook",
       name: "UserGuestbook",
       component: () => import("../views/UserGuestbook.vue"),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/guestbook",
+      name: "guestbook",
+      component: () => import("../views/GuestbookView.vue"),
       meta: { requiresAuth: true },
     },
     {

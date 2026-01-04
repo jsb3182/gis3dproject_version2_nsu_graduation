@@ -220,7 +220,7 @@ export default {
     hospitalinformation() { this.$router.push('/GISAnalysis') },
     aichat() { this.$router.push('/aichat') },
     emergency() { this.$router.push('/Userboard') },
-    MyKids() { this.$router.push('/UserGuestbook') },
+    MyKids() { this.$router.push('/Guestbook') },
     goToHome() { this.$router.push('/') },
     goToLogin() { this.$router.push('/login') },
     goToAdminHome() { this.$router.push('/AdminHome') },

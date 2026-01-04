@@ -153,8 +153,8 @@ export async function getCurrentUser() {
  * 로그인 상태 확인
  */
 export function isAuthenticated() {
-  const user = localStorage.getItem('user'); // 'user'로 변경
-  return !!user; //로그인 상태 따라서 방문록 접근 가능함
+  const user = localStorage.getItem('user') || localStorage.getItem('currentUser');
+  return !!user;
 }
 
 /**

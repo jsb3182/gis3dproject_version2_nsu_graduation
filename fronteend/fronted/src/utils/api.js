@@ -22,7 +22,10 @@ export const memberApi = {
     return api.post('/login', params, {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     });
-  }
+  },
+
+  // 현재 로그인한 사용자 정보 조회
+  getCurrentUser: () => api.get('/api/members/me')
 };
 //게시판 관련 API
 export const postApi = {
