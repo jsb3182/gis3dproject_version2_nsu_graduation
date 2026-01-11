@@ -5,18 +5,18 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 @Service
-public class PostService {
+public class PostService {//비스니스 로직 담당
     private final PostRepository postRepository;
     public PostService(PostRepository postRepository) {
         this.postRepository = postRepository;
     }
-    //게시글 저장하기
+    //게시글 저장하기 하나의 트앥션으로 묶고 롤백
     @Transactional //이 메서드 안에 작업이면 전부 트렌젝션에 묶습니다.
     public Long savePost(PostRequest params) {
         Post post = new Post(params.getTitle(), params.getContent(),params.getWriterId());
         return postRepository.save(post).getId();
     }
-    //게시글 조회하기
+    //게시글 조회하기 논리 삭제되자 얺운 굴만 조회
     public List<Post> findAllPosts() {
         return postRepository.findAllByDeleteYnFalse();
     }

@@ -8,9 +8,10 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class MemberDetails implements UserDetails {
-
+//스프링 세큐리티는 db엔티티를 직접 모름, userDetails 인터페이스를 통해 사용자정보를 받음
     private final Member member; // 우리가 만든 엔티티
-
+    //스프이 세큐리티가 요구하는 사용자 규격 로그인시 반드시 구현 해야됨
+    //실제 db 저장된 회원 엔티티,생성 자 메서드
     public MemberDetails(Member member) {
         this.member = member;
     }
@@ -20,12 +21,12 @@ public class MemberDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
     }
-
+    //데이터 베이스에서 비밀번호를 제공합니다
     @Override
     public String getPassword() {
         return member.getPassword();
     }
-
+    //사용자 이름 제공 get으로 등록된 이름 가져오기
     @Override
     public String getUsername() {
         return member.getLoginId();

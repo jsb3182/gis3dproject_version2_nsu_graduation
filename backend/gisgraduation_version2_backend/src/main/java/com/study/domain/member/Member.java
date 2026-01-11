@@ -8,30 +8,30 @@ import java.time.LocalDateTime; //날짜 가져오기
 @Table(name = "tb_member", schema = "public") //테이블 이름 스키마어디에 있는지 public
 public class Member {
     @Id //기본키
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //pk 설정
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //pk 설정 identity는 db가 자동으로 증가처리함
     private Long id;
 
     @Column(name = "login_id", nullable = false, unique = true)
-    private String loginId;
+    private String loginId; // 디비 컬럼명, notnull 유니크로 중복이 안된다
 
     @Column(nullable = false)
-    private String password;
+    private String password;//비밀번호
 
     @Column(nullable = false)
-    private String name;
+    private String name; //이름
 
     @Column(nullable = false, length = 1)
     private String gender;
 
     @Column(nullable = false)
-    private LocalDate birthday;
+    private LocalDate birthday; //생년월일
 
     @Column(name = "delete_yn", nullable =false)
-    private boolean deleteYn = false;
-
+    private boolean deleteYn = false;//논리삭제 컬럼 그 상태 값으로 처리
+    //생성시각 udate 퀴리가 날라와도 상태가 그대로임
     @Column(name = "created_date", nullable = false, updatable = false)
     private LocalDateTime createdDate = LocalDateTime.now();
-
+    //서비스 레이어에서 직접 설명하는구조
     @Column(name = "modified_date")
     private LocalDateTime modifiedDate;
 

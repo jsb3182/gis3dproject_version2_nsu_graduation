@@ -19,7 +19,7 @@ public class ShelterService {
      */
     public List<ShelterNearResponse> findNear(double lon, double lat, double meter, int limit) {
 
-        // 안전장치: 너무 큰 값 방지
+        // 안전장치: 너무 큰 값 방지dd
         if (meter <= 0) meter = 500;           // 기본 500m
         if (limit <= 0) limit = 200;           // 기본 200개
         if (limit > 1000) limit = 1000;        // 최대 1000개 제한

@@ -1,13 +1,13 @@
 package com.study.domain.member;
 import java.time.LocalDate;
 //회원가입 화면에서 데이터를 받는 클레스
-
+//회원가입 요청 데이터 전요 클래스
 public class MemberRequest {
-    private String loginId;
-    private String password;
+    private String loginId; //아이디 중복 검사 대상
+    private String password; //비밀번호 서비스에서 암호화ㅣ후에 엔티티에 저장
     private String name;
-    private String gender;
-    private LocalDate birthday;
+    private String gender; //성별 나중에 Enum으로 바꾸기 좋음
+    private LocalDate birthday;//생년월일 json loacdate자동 맵핑
 
     public MemberRequest(){}
     // Getter/Setter
