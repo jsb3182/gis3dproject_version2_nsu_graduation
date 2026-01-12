@@ -24,33 +24,7 @@
     </header>
 
 
-     <!-- 👇 관리자용 헤더 -->
-    <header
-      v-else-if="isAdminRoute"
-      class="navbar navbar-light bg-white shadow-sm fixed-top"
-    >
-      <div class="d-flex align-items-center justify-content-between w-100 px-4">
-        <!-- 좌측: 로고 + 텍스트 -->
-        <div class="d-flex align-items-center" style="cursor: pointer;" @click="goToAdminHome">
-          <img
-            src="@/assets/kid_logo.png"
-            alt="logo"
-            class="me-2"
-            style="width:50px;height:50px;vertical-align:middle;"
-          />
-          <span class="fw-bold fs-5 text-dark">아이119 관리자</span>
-        </div>
 
-        <!-- 우측: 로그인/로그아웃 버튼 (같은 로직 재사용) -->
-        <button
-          @click="logAction"
-          class="btn text-bold"
-          :class="{ 'btn-light' : status === '로그아웃', 'btn-primary' : status === '로그인'}"
-        >
-          <span>{{ status }}</span>
-        </button>
-      </div>
-    </header>
 
 
     <aside v-if="isAdminRoute" class="admin-aside bg-light border-end shadow-sm p-3" >
@@ -158,14 +132,14 @@
         </li>
 
         <li class="nav-item border-start">
-          <button @click="aichat"
+          <button @click="DisasterView"
             class="nav-link d-flex flex-column align-items-center justify-content-center py-2 text-gray"
-            :class="{ 'bg-light': $route.path === '/aichat' }">
+            :class="{ 'bg-light': $route.path === '/DisasterView' }">
             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24">
               <path fill="currentColor"
                 d="M19 8h1v1h-1zm1-3h-1v2h1V6h.5c.28 0 .5-.22.5-.5v-2c0-.28-.22-.5-.5-.5H18v1h2zm-3-2h-1v4h1zm-3.5 12.5a2 2 0 1 0 4 0c0-1.11-.89-2-2-2s-2 .9-2 2M17 8h-1v1h1zm5 6h-1c0-1.5-.47-2.87-1.26-4h-2.77c1.22.91 2.03 2.36 2.03 4v2h2v1h-2v3H5v-3H3v-1h2v-2c0-2.76 2.24-5 5-5h4c.34 0 .68.04 1 .1V7.08c-.33-.05-.66-.08-1-.08h-1V5.73A2 2 0 1 0 10 4c0 .74.4 1.39 1 1.73V7h-1c-3.87 0-7 3.13-7 7H2c-.55 0-1 .45-1 1v3c0 .55.45 1 1 1h1v1a2 2 0 0 0 2 2h14c1.11 0 2-.89 2-2v-1h1c.55 0 1-.45 1-1v-3c0-.55-.45-1-1-1m-13.5-.5c-1.1 0-2 .9-2 2s.9 2 2 2s2-.89 2-2s-.89-2-2-2" />
             </svg>
-            <small class="mt-1 text-nowrap text-medium">AI 챗봇</small>
+            <small class="mt-1 text-nowrap text-medium">실시간 대피정보</small>
           </button>
         </li>
 
@@ -210,7 +184,7 @@ export default {
       return this.$route.path.startsWith('/Admin')
     },
     isAuthRoute() {
-      const authPaths = ['/login', '/sginup', '/forgotpassword', '/forgotid']
+      const authPaths = ['/login', '/sginup', '/forgotpassword', '/forgotid','/disaster']
       return authPaths.includes(this.$route.path)
     }
   },
@@ -218,9 +192,9 @@ export default {
   methods: {
     mypage() { this.$router.push('/mypage') },
     hospitalinformation() { this.$router.push('/GISAnalysis') },
-    aichat() { this.$router.push('/aichat') },
-    emergency() { this.$router.push('/Userboard') },
-    MyKids() { this.$router.push('/Guestbook') },
+    DisasterView() { this.$router.push('/DisasterView') },
+    emergency() { this.$router.push('/userboard') },
+    MyKids() { this.$router.push('/guestbook') },
     goToHome() { this.$router.push('/') },
     goToLogin() { this.$router.push('/login') },
     goToAdminHome() { this.$router.push('/AdminHome') },

@@ -54,9 +54,9 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: "/aichat",
-      name: "aichat",
-      component: () => import("../views/aichat.vue"),
+      path: "/DisasterView",
+      name: "DisasterView",
+      component: () => import("../views/DisasterView.vue"),
     },
     {
       path: "/GISAnalysis",
