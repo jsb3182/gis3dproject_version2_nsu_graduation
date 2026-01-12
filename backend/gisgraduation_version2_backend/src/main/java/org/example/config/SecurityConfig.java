@@ -40,8 +40,9 @@ public class SecurityConfig {
                                 // ✅ 정적 리소스 허용 (Vue/Vite/기본 리소스 대응)
                                 .requestMatchers("/css/**", "/js/**", "/assets/**", "/*.css", "/*.js", "/*.svg").permitAll()
 
-                                // ✅ 너가 이미 허용해둔 API들 그대로 유지
+                                // ✅ 너가 이미 허용해둔 API들 그대로 유지 하기
                                 .requestMatchers("/api/members/**", "/api/posts/**", "/api/guestbooks/**", "/api/shelters/**",
+                                        "/api/disaster/**",// 실시간 대피정보 api 받아오기
                                         "/login", "/signup").permitAll()
 
                                 // ✅ 나머지는 로그인 필요 유지

@@ -11,7 +11,7 @@ public class PostApiController {
     }
 
     //글 쓰기
-    @PostMapping public
+    @PostMapping
     public Long save(@RequestBody PostRequest params) {
         return postService.savePost(params);
     }
