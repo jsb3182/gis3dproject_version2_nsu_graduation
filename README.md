@@ -48,8 +48,8 @@
 - **공간 최적화**: Python 유전 알고리즘으로 150개 대피소의 최적 배치 계산
 - **3D 시각화**: Cesium.js 기반 3D 지도에서 실시간 대피소 위치 확인
 - **네트워크 분석**: PostGIS의 pgRouting을 활용한 최단 경로 분석
-- **사용자 참여**: 게시판, 방명록을 통한 시민 의견 수렴
-
+- **사용자 참여**: 게시판, 방명록을 통한 사용자 의견수렴
+- **대피메시지 실시간 재공*
 ---
 
 ## 주요 기능
@@ -68,7 +68,7 @@
 - **방명록** (UserGuestbook): 방문자 메시지
 - **마이페이지**: 회원 정보 수정, 내 게시글 관리
 
-### 4. 대피소 실시간 메시지 알림 (개발 중)
+### 4. 대피소 실시간 메시지 알림 
 - 대피소 관련정보 api 를 통해서 실시간으로 사용자에게 알림
 
 ---
@@ -264,14 +264,14 @@ fronted/
 │   │   ├── vworldfunction.js  # VWorld API
 │   │   └── userService.js     # 사용자 상태 관리
 │   ├── views/                 # 페이지 컴포넌트
-│   │   ├── HomeView.vue       # 홈 (응급실 지도)
+│   │   ├── HomeView.vue       # 홈 ()
 │   │   ├── GISAnalysis.vue    # 3D 대피소 지도
 │   │   ├── login.vue          # 로그인
 │   │   ├── sginup.vue         # 회원가입
 │   │   ├── mypage.vue         # 마이페이지
 │   │   ├── Userboard.vue      # 게시판
 │   │   ├── UserGuestbook.vue  # 방명록
-│   │   └── aichat.vue         # AI 챗봇
+│   │   └── DisasterView.vue   # 실시간 재난문자 알림이
 │   ├── App.vue                # 루트 컴포넌트
 │   └── main.js                # 앱 진입점
 ├── .env.example               # 환경 변수 예제
@@ -295,7 +295,6 @@ fronted/
 | **마이페이지** | `/mypage` | 회원 정보 수정 | ✓ |
 | **게시판** | `/Userboard` | 공지사항, 자유게시판 | ✓ |
 | **방명록** | `/UserGuestbook` | 방문자 메시지 작성 | ✓ |
-| **AI 챗봇** | `/aichat` | 대피소 질의응답 | ✗ |
 
 ---
 
@@ -313,7 +312,9 @@ fronted/
 
 ### 방문록 기능 
 <img width="997" height="891" alt="image" src="https://github.com/user-attachments/assets/62ddc783-9026-4cbe-9622-d7afab9b79f7" />
-### ai chact bot은 제작중
+### 실시간 대피소 정보 제공 페이지
+<img width="946" height="959" alt="image" src="https://github.com/user-attachments/assets/a35dba6f-8d80-46f8-aa1a-ff5610b301e7" />
+
 ### 시스템 아키텍처
 <img width="768" height="553" alt="image" src="https://github.com/user-attachments/assets/15f13d65-c699-479c-88e7-cb5c55d60238" />
 
