@@ -22,7 +22,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api-geoserver': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:8090',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api-geoserver/, '/geoserver')
