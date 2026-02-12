@@ -5,3 +5,16 @@ dist/
 python/
 # Claude / AI tool local settings
 .claude/
+# Docker data directories (이 폴더들은 깃에 올리지 않습니다)
+**/geoserver-data/
+**/postgres-data/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+target/
+*.jar
+*.sql
+*.minbangwi

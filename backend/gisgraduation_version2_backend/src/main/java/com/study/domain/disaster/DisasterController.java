@@ -18,7 +18,7 @@ import java.util.List;
         public DisasterController(DisasterService disasterService) {
             this.disasterService = disasterService;
         }
-        //프로트엔드에서 get으로 이제 요청을 받으면 재난 문자 리스트를 주게 됩니다.
+        //프로트엔드에서 get으로 이제 요청을 받으면 재난 문자 리스트를 주게 됩니다.    
         //요청 주소: GET http://localhost: 8080/api/disaster
         @GetMapping//get 요청을 받겠다고 선언
         public ResponseEntity<List<DisasterMessage.Item>>getRealtimeDisasterInfo() {

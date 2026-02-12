@@ -1,8 +1,7 @@
 <template>
-  <div class="container py-5">
-    
+  <div class="container-fluid min-vh-100 d-flex flex-column justify-content-center py-5 px-4">
     <div class="row justify-content-center mb-4">
-      <div class="col-md-8">
+      <div class="col-12 col-md-10 c0l-lg-8 mx-auto"><!--화면에 꽉차게 만들기-->
         <div class="card shadow-sm border-0 bg-light">
           <div class="card-body text-center">
             <h2 class="card-title fw-bold mb-3">🚨 실시간 재난 문자 알림</h2>
@@ -20,7 +19,7 @@
     </div>
 
     <div class="row justify-content-center">
-      <div class="col-md-8">
+      <div class="col-12 col-md-8 col-lg-6 mx-auto">
         
         <div v-if="isLoading" class="text-center py-5">
           <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
